@@ -14,8 +14,8 @@ public class Main {
 		
 		setProxyProperties();
 		            
-		AppWindow window = new AppWindow("testingnewestapp");
-		window.loadLoginScreen();
+		AppWindow window = new AppWindow();
+		window.loadLoginScreen():
 
 	}
 	

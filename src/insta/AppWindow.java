@@ -371,7 +371,7 @@ public class AppWindow {
         }
        
         void setComments(int pos) throws IOException{
-               
+
                 List<CommentData> commentsData = commentsList.get(pos).getComments();
                 int commentsCount = commentsData.size();
                 int startPositionY = (int)metrics.commenterImageBounds.getY();
