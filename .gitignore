@@ -1,0 +1,14 @@
+.idea
+.settings
+assets
+bin
+lib
+out
+pics
+wpb-meta
+.classpath
+.project
+hs_err_pid6376.log
+insta.iml
+jInstagram-1.1.0-SNAPSHOT.jar
+pom.xml
