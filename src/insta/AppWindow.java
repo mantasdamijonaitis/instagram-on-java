@@ -45,48 +45,49 @@ import javax.swing.JButton;
  
 @SuppressWarnings("MagicConstant")
 public class AppWindow {
-	
+
 	JFrame frame;
-    
+
     JFrame loginFrame;
-   
-    static JLayeredPane layeredPane;
-   
-    static AppWindow window;
-   
-    static JLabel PictureLabel;
-    static JLabel CaptionLabel;
-    static JLabel UploaderImageLabel;
-    static JLabel UploaderNameLabel;
-    static JLabel commenterProfilePictureLabel;
-    static JLabel commentLabel;
-    
+
+    JLayeredPane layeredPane;
+
+    AppWindow window;
+
+    JLabel PictureLabel;
+    JLabel CaptionLabel;
+    JLabel UploaderImageLabel;
+    JLabel UploaderNameLabel;
+    JLabel commenterProfilePictureLabel;
+    JLabel commentLabel;
+
     JPanel WelcomePanel;
-   
-    static int width;
-    static int height;
-    static int count = 0;
-   
-    static ArrayList<Images> imagesList;
-    static ArrayList<Caption> captionsList;
-    static ArrayList<User> usersList;
-    static ArrayList<Comments> commentsList;
-   
-    InstagramDataReceiver receiver;
-   
-    static JLabel commenterProfilePicture[];
-    static JLabel comment[];
-    
+
+    int width;
+    int height;
+    int count = 0;
+
+    ArrayList<Images> imagesList;
+    ArrayList<Caption> captionsList;
+    ArrayList<User> usersList;
+    ArrayList<Comments> commentsList;
+
+    InstagramFeedIterator receiver;
+
+    JLabel commenterProfilePicture[];
+    JLabel comment[];
+
     LayoutMetrics metrics;
-    
+
     public String userId;
 
     boolean useProxy = false;
- 
+
     public AppWindow(String userId) throws IOException{
-    	
-    	this.userId = userId;
-    	System.out.println("receivedInAppWindow " + userId);
+
+        //initialize();
+    	//this.userId = userId;
+    	//System.out.println("receivedInAppWindow " + userId);
         
     }
        
@@ -94,14 +95,17 @@ public class AppWindow {
          * Launch the application.
          * @throws IOException
          */
-        public void start(String userId) throws IOException {
-        	this.userId = userId;
+        public void start(final String userId) throws IOException {
+
+            this.userId = userId;
                
         		EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         window = null;
                         try {
                             window = new AppWindow();
+                            initialize();
+                            //updateFrame(0);
                         } catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -156,8 +160,8 @@ public class AppWindow {
          * @wbp.parser.entryPoint
          */
         public AppWindow() throws IOException {
- 
-                initialize();
+
+            initialize();
                
         }
  
@@ -168,7 +172,7 @@ public class AppWindow {
         private void initialize() throws IOException {
 
                 initializeScreenDimensions();
-                initializeInstagramData();
+                initializeInstagramData(userId);
                 initializeDataArrays();
                 initializeMainFrame();
                 initializeLayoutType();
@@ -223,19 +227,19 @@ public class AppWindow {
                
         }
        
-        void initializeInstagramData() throws InstagramException{
+        void initializeInstagramData(String userId) throws InstagramException{
                
-                receiver= new InstagramDataReceiver("vilniuscc");
-                receiver.getData();
+                //receiver= new InstagramFeedIterator(userId);
+               // receiver.getData();
                
         }
        
         void initializeDataArrays(){
 
-            imagesList = receiver.getImages();
-            captionsList = receiver.getCaptions();
-            usersList = receiver.getUsers();
-            commentsList = receiver.getComments();
+            //imagesList = receiver.getImages();
+           // captionsList = receiver.getCaptions();
+           // usersList = receiver.getUsers();
+           // commentsList = receiver.getComments();
 
         }
 
@@ -482,7 +486,7 @@ public class AppWindow {
         	LoginScreen loginScreen = new LoginScreen(width,height);
         	
         	initializeScreenDimensions();
-            initializeInstagramData();
+            initializeInstagramData(userId);
             initializeDataArrays();
             initializeMainFrame();
         	
@@ -522,7 +526,7 @@ public class AppWindow {
 
         if(position == imagesList.size() - 1){
 
-            initializeInstagramData();
+            initializeInstagramData(userId);
             initializeDataArrays();
 
         }

@@ -43,16 +43,21 @@ public class PhotoFrame {
 
     LayoutMetrics metrics;
 
-    int width,height;
+    int width,height,counter;
 
     boolean useProxy;
 
-    public PhotoFrame(){
+    public PhotoFrame(boolean useProxy, int counter) throws IOException {
 
+        this.useProxy = useProxy;
+        this.counter = counter;
 
         initializeMetrics();
+        initializeLayeredPane();
         initializeBackground();
         initializeMediaFields();
+
+
 
     }
 
@@ -109,6 +114,8 @@ public class PhotoFrame {
     }
 
    void initializeBackground(){
+
+
 
        backgroundLabel = new JLabel();
        layeredPhotoPanel.setLayer(backgroundLabel, 0);

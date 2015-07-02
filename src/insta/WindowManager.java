@@ -8,13 +8,11 @@ import org.jinstagram.exceptions.InstagramException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
@@ -32,7 +30,7 @@ public class WindowManager {
     ArrayList<User> usersList;
     ArrayList<Comments> commentsList;
 
-    InstagramDataReceiver receiver;
+    InstagramFeedIterator receiver;
 
     String userId;
 
@@ -111,6 +109,8 @@ public class WindowManager {
 
                 if (textField.getText().toString().length() > 0) {
 
+                    System.out.println("clicked");
+
                     counter = 0;
 
                     try {
@@ -121,7 +121,11 @@ public class WindowManager {
 
                     initializeDataArrays();
 
-                    frame = new PhotoFrame();
+                    try {
+                        frame = new PhotoFrame(useProxy,counter);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
 
                     java.util.Timer timer = new java.util.Timer();
                     timer.schedule(new TimerTask() {
@@ -140,6 +144,7 @@ public class WindowManager {
                                 frame.setMainPicture();
                                 frame.setComments(counter);
 
+                                mainWindow.getContentPane().setLayout(new CardLayout(0, 0));
                                 mainWindow.getContentPane().add(frame.returnCompletePhotoFrame(), "name_28865865238250");
                                 mainWindow.setVisible(true);
 
@@ -179,17 +184,17 @@ public class WindowManager {
 
     void initializeInstagramData(String userId) throws InstagramException {
 
-        receiver= new InstagramDataReceiver(userId);
-        receiver.getData();
+       // receiver= new InstagramFeedIterator(userId);
+       // receiver.getData();
 
     }
 
     void initializeDataArrays(){
 
-        imagesList = receiver.getImages();
-        captionsList = receiver.getCaptions();
-        usersList = receiver.getUsers();
-        commentsList = receiver.getComments();
+      //  imagesList = receiver.getImages();
+      //  captionsList = receiver.getCaptions();
+       // usersList = receiver.getUsers();
+       // commentsList = receiver.getComments();
 
     }
 

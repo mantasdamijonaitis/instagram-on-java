@@ -1,21 +1,31 @@
 package insta;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import java.util.Iterator;
 
 
 public class Main {
 
 	public static void main(String[] args) throws IOException  {
+
+		//AuthenticationProxy roxy = new AuthenticationProxy();
+
+
+		InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
+		iterator.recall();
+		System.out.println(iterator.counter);
+
 		
-		setProxyProperties();
+		//setProxyProperties();
 		            
-		AppWindow window = new AppWindow();
-		window.loadLoginScreen():
+		//AppWindow window = new AppWindow();
+		//window.loadLoginScreen();
+
+		//WindowManager manager = new WindowManager(false);
+		//manager.launchSlideshowRoutine();
 
 	}
 	
