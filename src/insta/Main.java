@@ -15,8 +15,13 @@ public class Main {
 
 
 		InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
-		iterator.recall();
-		System.out.println(iterator.counter);
+		iterator.printThatShit();
+		/*iterator.getMoreData(true);
+		iterator.getMoreData(false);
+		iterator.getMoreData(false);*/
+		//iterator.recall();
+		//iterator.workWithPicture();
+		//System.out.println(iterator.counter);
 
 		
 		//setProxyProperties();
