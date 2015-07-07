@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.*;
+import java.util.Timer;
 
 
 /**
@@ -14,39 +15,30 @@ import java.util.*;
 public class WindowManager {
 
     private JFrame mainWindow;
-    private String userId;
-    private InstagramFeedIterator iterator;
     private LoginScreen loginScreen;
-    private LayoutMetrics metrics;
-    private JPanel photoPanel;
-    private JTextField textField;
 
     boolean toContinue;
 
     public WindowManager() throws IOException {
 
-        initializeMetrics();
-        initializeMainWindow();
-        loadLoginScreen();
-        launchSlideshowRoutine();
+        final LayoutMetrics metrics = initializeMetrics();
+        initializeMainWindow(metrics);
+        loadLoginScreen(metrics);
+        launchSlideshowRoutine(metrics);
 
     }
 
 
 
-    void initializeMetrics(){
+    LayoutMetrics initializeMetrics(){
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        int width = (int)screenSize.getWidth();
-        int height = (int)screenSize.getHeight();
-
-        metrics = new LayoutMetrics(width,height);
+        return new LayoutMetrics((int)screenSize.getWidth(),(int)screenSize.getHeight());
 
     }
 
 
-    void initializeMainWindow(){
+    void initializeMainWindow(LayoutMetrics metrics){
 
         mainWindow = new JFrame();
         mainWindow.setBounds(0, 0, metrics.screenWidth, metrics.screenHeight);
@@ -56,7 +48,7 @@ public class WindowManager {
 
     }
 
-    void loadLoginScreen() throws IOException {
+    void loadLoginScreen(LayoutMetrics metrics) throws IOException {
 
         loginScreen = new LoginScreen(metrics.screenWidth,metrics.screenHeight);
 
@@ -67,7 +59,7 @@ public class WindowManager {
 
     }
 
-    void launchSlideshowRoutine(){
+    void launchSlideshowRoutine(final LayoutMetrics metrics){
 
         toContinue = true;
 
@@ -77,23 +69,22 @@ public class WindowManager {
 
             public void actionPerformed(ActionEvent e) {
 
-                textField = loginScreen.getInitializetTextField();
+                JTextField textField = loginScreen.getInitializetTextField();
+                JPanel photoPanel = loginScreen.getInitializedLoginPanel();
 
                 if (textField.getText().toString().length() > 0) {
 
-                    //System.out.println("clicked");
-
-                    java.util.Timer timer = new java.util.Timer();
+                    Timer timer = new java.util.Timer();
                     RepeatableTask task = null;
 
                     try {
                         task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
                     } catch (InstagramException e1) {
-                        JLabel errorMessage = loginScreen.showFieldWithErrorMessage(e1.toString());
+                        loginScreen.showFieldWithErrorMessage((int)metrics.screenWidth,(int)metrics.screenHeight,e1.toString());
                         mainWindow.setVisible(true);
                         toContinue = false;
                     }
-                    
+
                     if(toContinue)
                     timer.schedule(task, 0, 3000);
 

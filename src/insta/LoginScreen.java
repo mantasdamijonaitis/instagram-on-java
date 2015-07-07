@@ -13,34 +13,25 @@ import javax.swing.JTextField;
 public class LoginScreen {
 	
 		JPanel loginPanel;
-		
+
+		JButton launchButton;
+
+		JTextField instagramTagField;
+
 		private JLayeredPane layeredLoginPane;
 		
-		private JLabel backgroundLabel;
-		
-		private JTextField instagramTagField;
-		
-		private JButton launchButton;
-		
-		int height;
-		int width;
-		
 	public LoginScreen(int width,int height) throws IOException{
-		
-		this.height = height;
-		this.width = width;
        
-		initializeFrame();
+		initializeFrame(width, height);
 		initializeLayout();
-		initializeLayout();
-		initializeBackground();
-		initializeWelcomeText();
-		initializeInputField();
-		initializeButton();
+		initializeBackground(width,height);
+		initializeWelcomeText(width,height);
+		initializeInputField(width,height);
+		initializeButton(width,height);
 		
 	}
 	
-	void initializeFrame(){
+	void initializeFrame(int width, int height){
 		
 		loginPanel = new JPanel();
     	loginPanel.setSize(width, height);
@@ -56,9 +47,9 @@ public class LoginScreen {
 		
 	}
 	
-	void initializeBackground() throws IOException{
+	void initializeBackground(int width, int height) throws IOException{
 		
-		backgroundLabel = new JLabel("New label");
+		JLabel backgroundLabel = new JLabel("New label");
         layeredLoginPane.setLayer(backgroundLabel, 0);
         backgroundLabel.setBounds(0, 0, width, height);
 
@@ -69,7 +60,7 @@ public class LoginScreen {
 		
 	}
 	
-	void initializeWelcomeText(){
+	void initializeWelcomeText(int width, int height){
 		
 		JLabel welcomeTextLabel = new JLabel("Welcome using PicSharing Tool! To begin, enter instagram tag below:");
         layeredLoginPane.setLayer(welcomeTextLabel, 1);
@@ -83,7 +74,7 @@ public class LoginScreen {
 		
 	}
 	
-	void initializeInputField(){
+	void initializeInputField(int width, int height){
 		
 		instagramTagField = new JTextField();
         layeredLoginPane.setLayer(instagramTagField, 1);
@@ -98,11 +89,11 @@ public class LoginScreen {
 		
 	}
 	
-	void initializeButton(){
+	void initializeButton(int width, int height){
 		
 		launchButton = new JButton("Start!");
         layeredLoginPane.setLayer(launchButton, 1);
-        launchButton.setBounds(width / 2 - width / 10, height / 3 + instagramTagField.getHeight() + height / 30, width / 5, height / 20);
+        launchButton.setBounds(width / 2 - width / 10, height / 3 + height / 20 + height / 30, width / 5, height / 20);
         launchButton.setBackground(Color.ORANGE);
         layeredLoginPane.add(launchButton);
 		
@@ -126,7 +117,7 @@ public class LoginScreen {
 		
 	}
 
-	JLabel showFieldWithErrorMessage(String message){
+	JLabel showFieldWithErrorMessage(int width, int height,String message){
 
 		JLabel errorMessageField = new JLabel();
 		errorMessageField.setBounds(width / 2 - width / 10, height / 3 + instagramTagField.getHeight() + height / 15, width / 5, height / 20);

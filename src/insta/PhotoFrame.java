@@ -1,5 +1,6 @@
 package insta;
 
+import com.sun.java.util.jar.pack.Attribute;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
 import org.jinstagram.entity.common.User;
@@ -28,23 +29,21 @@ public class PhotoFrame {
     private JLabel uploaderNameLabel;
     private JLabel backgroundLabel;
 
-    LayoutMetrics metrics;
-
     private MediaFeedData media;
 
     public PhotoFrame(MediaFeedData media) throws IOException {
 
         this.media = media;
-        initializeMetrics();
-        initializePhotoPanel();
+        LayoutMetrics metrics = initializeMetrics();
+        initializePhotoPanel(metrics);
         initializeLayeredPane();
         initializeMediaFields();
-        initializeBackground();
-        setMainPicture(media.getImages().getStandardResolution().getImageUrl());
-        setCaption(media.getCaption());
-        setUploaderName(media.getUser());
-        setUploaderProfilePicture(media.getUser().getProfilePictureUrl());
-        setComments(media.getComments());
+        initializeBackground(metrics);
+        setMainPicture(media.getImages().getStandardResolution().getImageUrl(),metrics);
+        setCaption(media.getCaption(),metrics);
+        setUploaderName(media.getUser(),metrics);
+        setUploaderProfilePicture(media.getUser().getProfilePictureUrl(),metrics);
+        setComments(media.getComments(),metrics);
 
     }
 
@@ -54,7 +53,7 @@ public class PhotoFrame {
 
     }
 
-    void setUploaderProfilePicture(String uploaderUrl) throws IOException {
+    void setUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics) throws IOException {
 
         uploaderImageLabel.setBounds(metrics.uploaderImageBounds);
 
@@ -77,7 +76,7 @@ public class PhotoFrame {
 
     }
 
-    void setCaption(Caption caption){
+    void setCaption(Caption caption, LayoutMetrics metrics){
 
         captionLabel.setText(caption.getText());
         captionLabel.setBounds(metrics.captionBounds);
@@ -85,7 +84,7 @@ public class PhotoFrame {
 
     }
 
-    void setUploaderName(User user){
+    void setUploaderName(User user, LayoutMetrics metrics){
 
         uploaderNameLabel.setText(user.getUserName());
         uploaderNameLabel.setBounds(metrics.uploaderNameBounds);
@@ -94,7 +93,7 @@ public class PhotoFrame {
     }
 
 
-    void setMainPicture(String imagePath) throws IOException {
+    void setMainPicture(String imagePath, LayoutMetrics metrics) throws IOException {
 
         URL url = new URL(imagePath);
         pictureLabel.setBounds(metrics.imageBounds);
@@ -121,14 +120,14 @@ public class PhotoFrame {
 
     }
 
-    void initializeMetrics(){
+    LayoutMetrics initializeMetrics(){
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         int width = (int)screenSize.getWidth();
         int height = (int)screenSize.getHeight();
 
-        metrics = new LayoutMetrics(width,height);
+        return new LayoutMetrics(width,height);
 
     }
 
@@ -139,7 +138,7 @@ public class PhotoFrame {
 
     }
 
-    void initializePhotoPanel(){
+    void initializePhotoPanel(LayoutMetrics metrics){
 
         photoPanel = new JPanel();
         photoPanel.setLayout(new CardLayout(0, 0));
@@ -148,7 +147,7 @@ public class PhotoFrame {
 
     }
 
-   void initializeBackground(){
+   void initializeBackground(LayoutMetrics metrics){
 
 
 
@@ -185,7 +184,7 @@ public class PhotoFrame {
 
     }
 
-    void setComments(Comments comments) throws IOException{
+    void setComments(Comments comments, LayoutMetrics metrics) throws IOException{
 
         int commentsCount = comments.getCount();
         int startPositionY = (int)metrics.commenterImageBounds.getY();
