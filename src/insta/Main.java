@@ -1,54 +1,67 @@
 package insta;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Main {
 
+ 	static JFrame frame;
+	static JPanel photoPanel = null;
+	static InstagramFeedIterator iterator;
+
 	public static void main(String[] args) throws IOException  {
 
-		//AuthenticationProxy roxy = new AuthenticationProxy();
+		WindowManager manager = new WindowManager();
+
+		/*iterator = new InstagramFeedIterator("testingnewestapp");
+		frame = new JFrame();
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+		int width = (int)screenSize.getWidth();
+		int height = (int)screenSize.getHeight();
+
+		frame.setBounds(0, 0, width, height);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setUndecorated(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-		InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
-		iterator.printThatShit();
-		/*iterator.getMoreData(true);
-		iterator.getMoreData(false);
-		iterator.getMoreData(false);*/
-		//iterator.recall();
-		//iterator.workWithPicture();
-		//System.out.println(iterator.counter);
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
 
-		
-		//setProxyProperties();
-		            
-		//AppWindow window = new AppWindow();
-		//window.loadLoginScreen();
+			@Override
+			public void run() {
 
-		//WindowManager manager = new WindowManager(false);
-		//manager.launchSlideshowRoutine();
+				try {
+					if (iterator.hasNext()) {
+						photoPanel = new PhotoFrame(iterator.next()).getCompletePhotoPanel();
+					} else {
+						iterator = new InstagramFeedIterator("testingnewestapp");
+						photoPanel = new PhotoFrame(iterator.next()).getCompletePhotoPanel();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				frame.add(photoPanel);
+				//frame.getContentPane().setLayout(new CardLayout(0, 0));
+				frame.setVisible(true);
 
-	}
-	
-	static void setProxyProperties(){
-		
-		System.setProperty("proxySet","true");
-		System.setProperty("http.proxyHost","proxyvip.foreningssparbanken.se");
-		System.setProperty("http.proxyPort","8080");
-		Authenticator.setDefault(new Authenticator(){
-			
-			protected PasswordAuthentication getPasswordAuthentication(){
-				
-				return new PasswordAuthentication("p998olj","p998olj".toCharArray());
-				
 			}
-			
-		});
-		
+
+		}, 0, 3000);
+
+		frame.add(photoPanel);
+
+		frame.setVisible(true);*/
+
 	}
 	
 }

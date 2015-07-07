@@ -1,6 +1,6 @@
 package insta;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class LayoutMetrics {
 	
@@ -44,25 +44,25 @@ public class LayoutMetrics {
 	Rectangle commentBounds;
 
 	void calculateImageMetrics(){
-		
+
 		int imageX = this.screenWidth / 50;
-		int imageY = imageX;
-		
+		int imageY = imageX + this.screenHeight / 20;
+
 		int imageBoundsX = (this.screenWidth / 2);
-		int imageBoundsY = this.screenHeight - imageY * 3;
+		int imageBoundsY = this.screenHeight - imageY * 2;
 		
 		imageBounds = new Rectangle(imageX, imageY, imageBoundsX, imageBoundsY);
 		
 	}
 	
 	void calculateCaptionMetrics(){
-		
-		int captionX = 0;
+
+		int captionX = (int)this.imageBounds.getX();
 		int captionY = 0;
-		
+
 		int captionBoundsX = this.screenWidth / 2;
 		int captionBoundsY = this.screenHeight / 10;
-		
+
 		captionBounds = new Rectangle(captionX, captionY, captionBoundsX, captionBoundsY);
 		
 	}

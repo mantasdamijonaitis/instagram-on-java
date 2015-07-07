@@ -3,32 +3,24 @@ package insta;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 
 public class LoginScreen {
 	
 		JPanel loginPanel;
 		
-		JLayeredPane layeredLoginPane;
+		private JLayeredPane layeredLoginPane;
 		
-		JLabel backgroundLabel;
+		private JLabel backgroundLabel;
 		
-		JTextField instagramTagField;
+		private JTextField instagramTagField;
 		
-		JButton launchButton;
+		private JButton launchButton;
 		
 		int height;
 		int width;
@@ -101,7 +93,7 @@ public class LoginScreen {
         instagramTagField.setCaretColor(Color.ORANGE);
         instagramTagField.setForeground(Color.ORANGE);
         instagramTagField.setColumns(10);
-        instagramTagField.setText("Tag goes here...");
+        instagramTagField.setText("vilniuscc");
         layeredLoginPane.add(instagramTagField);
 		
 	}

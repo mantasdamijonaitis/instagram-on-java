@@ -1,86 +1,121 @@
 package insta;
 
-import org.jinstagram.entity.comments.CommentData;
-import org.jinstagram.entity.common.Images;
-import sun.plugin.dom.css.Rect;
-
+import org.jinstagram.entity.common.Caption;
+import org.jinstagram.entity.common.Comments;
+import org.jinstagram.entity.common.User;
+import org.jinstagram.entity.users.feed.MediaFeedData;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
 
 /**
  * Created by mantttttas on 2015-07-01.
  */
 public class PhotoFrame {
 
-    JLayeredPane layeredPhotoPanel;
+    private JLayeredPane layeredPhotoPanel;
 
     JPanel photoPanel;
 
-    JLabel pictureLabel;
-    JLabel captionLabel;
-    JLabel uploaderImageLabel;
-    JLabel uploaderNameLabel;
-    JLabel commenterProfilePictureLabel;
-    JLabel commentLabel;
-    JLabel backgroundLabel;
-
-    Image mainImage;
-    String caption;
-    Image uploaderImage;
-    String uploaderName;
-    JLabel [] commenterImage;
-    JLabel [] comment;
-
-    java.util.List<CommentData> commentsData;
+    private JLabel pictureLabel;
+    private JLabel captionLabel;
+    private JLabel uploaderImageLabel;
+    private JLabel uploaderNameLabel;
+    private JLabel backgroundLabel;
 
     LayoutMetrics metrics;
 
-    int width,height,counter;
+    private MediaFeedData media;
 
-    boolean useProxy;
+    public PhotoFrame(MediaFeedData media) throws IOException {
 
-    public PhotoFrame(boolean useProxy, int counter) throws IOException {
-
-        this.useProxy = useProxy;
-        this.counter = counter;
-
+        this.media = media;
         initializeMetrics();
+        initializePhotoPanel();
         initializeLayeredPane();
-        initializeBackground();
         initializeMediaFields();
-
-
+        initializeBackground();
+        setMainPicture(media.getImages().getStandardResolution().getImageUrl());
+        setCaption(media.getCaption());
+        setUploaderName(media.getUser());
+        setUploaderProfilePicture(media.getUser().getProfilePictureUrl());
+        setComments(media.getComments());
 
     }
 
-    JPanel returnCompletePhotoFrame(){
+    public JPanel getCompletePhotoPanel(){
 
         return photoPanel;
 
     }
 
-    void setMainPicture(){
+    void setUploaderProfilePicture(String uploaderUrl) throws IOException {
 
-        pictureLabel = new JLabel();
+        uploaderImageLabel.setBounds(metrics.uploaderImageBounds);
 
-        Point p = getMaximumImageSize();
+        URL userUrl = new URL(uploaderUrl);
 
-        metrics.imageBounds.width = p.x;
-        metrics.imageBounds.height = p.y;
+        if(System.getProperty("proxy")!=null) {
+            AuthenticationProxy conProxy = new AuthenticationProxy();
+            Proxy proxy = conProxy.getProxy();
 
-        int centeredY = (int)(height / 2 - metrics.imageBounds.getHeight() / 2);
+            URLConnection urlConnection = userUrl.openConnection(proxy);
+            InputStream inStream = urlConnection.getInputStream();
 
-        pictureLabel.setIcon(new ImageIcon(mainImage.getScaledInstance((int) p.x, p.y, Image.SCALE_SMOOTH)));
+            Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.uploaderImageBounds.getWidth(), (int) metrics.uploaderImageBounds.getHeight(), Image.SCALE_SMOOTH);
+            uploaderImageLabel.setIcon(new ImageIcon(image));
+        } else uploaderImageLabel.setIcon(new ImageIcon(ImageIO.read(userUrl).getScaledInstance((int) metrics.uploaderImageBounds.getWidth(), (int) metrics.uploaderImageBounds.getHeight(), Image.SCALE_SMOOTH)));
 
-        pictureLabel.setBounds((int) metrics.imageBounds.getX(), centeredY, p.x, p.y);
+
+
+        layeredPhotoPanel.add(uploaderImageLabel);
+
+    }
+
+    void setCaption(Caption caption){
+
+        captionLabel.setText(caption.getText());
+        captionLabel.setBounds(metrics.captionBounds);
+        layeredPhotoPanel.add(captionLabel);
+
+    }
+
+    void setUploaderName(User user){
+
+        uploaderNameLabel.setText(user.getUserName());
+        uploaderNameLabel.setBounds(metrics.uploaderNameBounds);
+        layeredPhotoPanel.add(uploaderNameLabel);
+
+    }
+
+
+    void setMainPicture(String imagePath) throws IOException {
+
+        URL url = new URL(imagePath);
+        pictureLabel.setBounds(metrics.imageBounds);
+
+        if(System.getProperty("proxy")!=null) {
+
+            AuthenticationProxy proxy = new AuthenticationProxy();
+            Proxy conProxy = proxy.getProxy();
+            URLConnection connection = url.openConnection(conProxy);
+            InputStream inStream = connection.getInputStream();
+            try {
+                pictureLabel.setIcon(new ImageIcon(
+
+                        ImageIO.read(inStream).getScaledInstance((int)metrics.imageBounds.getWidth(),(int)metrics.imageBounds.getHeight(), Image.SCALE_SMOOTH)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        else pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.imageBounds.getWidth(), (int)metrics.imageBounds.getHeight(), Image.SCALE_SMOOTH)));
 
         layeredPhotoPanel.add(pictureLabel);
 
@@ -90,8 +125,8 @@ public class PhotoFrame {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        int widthDouble = (int)screenSize.getWidth();
-        int heightDouble = (int)screenSize.getHeight();
+        int width = (int)screenSize.getWidth();
+        int height = (int)screenSize.getHeight();
 
         metrics = new LayoutMetrics(width,height);
 
@@ -108,7 +143,7 @@ public class PhotoFrame {
 
         photoPanel = new JPanel();
         photoPanel.setLayout(new CardLayout(0, 0));
-        photoPanel.setBounds(0, 0, width, height);
+        photoPanel.setBounds(0, 0, metrics.screenWidth, metrics.screenHeight);
         photoPanel.setVisible(true);
 
     }
@@ -119,7 +154,7 @@ public class PhotoFrame {
 
        backgroundLabel = new JLabel();
        layeredPhotoPanel.setLayer(backgroundLabel, 0);
-       backgroundLabel.setBounds(0, 0, width, height);
+       backgroundLabel.setBounds(0, 0, metrics.screenWidth, metrics.screenHeight);
 
        backgroundLabel.setOpaque(true);
        backgroundLabel.setBackground(Color.BLACK);
@@ -127,24 +162,6 @@ public class PhotoFrame {
        layeredPhotoPanel.add(backgroundLabel);
 
    }
-
-    String getPictureUrl(Images inputData) throws IOException{
-
-        String html="";
-        String input = inputData.getStandardResolution().toString();
-
-        int index = input.indexOf("imageUrl") + 9;
-
-        while(input.charAt(index) != ','){
-
-            html+=input.charAt(index);
-            index++;
-
-        }
-
-        return html;
-
-    }
 
     void initializeMediaFields(){
 
@@ -168,34 +185,15 @@ public class PhotoFrame {
 
     }
 
-    Point getMaximumImageSize(){
+    void setComments(Comments comments) throws IOException{
 
-        int endX = (int)(width / 2 - metrics.imageBounds.getX() * 2);
-        int endY = (int)(height - metrics.imageBounds.getY() * 2);
-
-        int maxX = 0;
-        int maxY = 0;
-
-        while(maxX < endX && maxY < endY){
-
-            maxX++;
-            maxY++;
-
-        }
-
-        return new Point(maxX,maxY);
-
-    }
-
-    void setComments(int pos) throws IOException{
-
-        int commentsCount = commentsData.size();
+        int commentsCount = comments.getCount();
         int startPositionY = (int)metrics.commenterImageBounds.getY();
 
         if(commentsCount > 0){
 
-            commenterImage = new JLabel[commentsCount];
-            comment = new JLabel[commentsCount];
+            JLabel commenterImage[] = new JLabel[commentsCount];
+            JLabel comment[] = new JLabel[commentsCount];
 
             for(int i = 0;i<commentsCount;i++){
 
@@ -203,11 +201,10 @@ public class PhotoFrame {
                 comment[i] = new JLabel("");
                 layeredPhotoPanel.setLayer(commenterImage[i], 1);
 
-                URL commenterPictureUrl = new URL(commentsData.get(i).getCommentFrom().getProfilePicture());
+                URL commenterPictureUrl = new URL(comments.getComments().get(i).getCommentFrom().getProfilePicture());
 
-                if(useProxy) {
-
-                    ConnectionProxy conProxy = new ConnectionProxy();
+                if(System.getProperty("proxy")!=null) {
+                    AuthenticationProxy conProxy = new AuthenticationProxy();
                     Proxy proxy = conProxy.getProxy();
 
                     URLConnection urlConnection = commenterPictureUrl.openConnection(proxy);
@@ -216,20 +213,19 @@ public class PhotoFrame {
                     Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.commenterImageBounds.getWidth(), (int) metrics.commenterImageBounds.getHeight(), Image.SCALE_SMOOTH);
 
                     commenterImage[i].setIcon(new ImageIcon(image));
-
-                } else commenterImage[i].setIcon(new ImageIcon(ImageIO.read(commenterPictureUrl).getScaledInstance((int)metrics.commenterImageBounds.getWidth(),(int)metrics.commenterImageBounds.getHeight(),Image.SCALE_SMOOTH)));
+                } else commenterImage[i].setIcon(new ImageIcon(ImageIO.read(commenterPictureUrl).getScaledInstance((int) metrics.commenterImageBounds.getWidth(), (int) metrics.commenterImageBounds.getHeight(), Image.SCALE_SMOOTH)));
 
                 commenterImage[i].setBounds((int)metrics.commenterImageBounds.getX(), startPositionY, (int)metrics.commenterImageBounds.getWidth(), (int)metrics.commenterImageBounds.getHeight());
                 layeredPhotoPanel.add(commenterImage[i]);
 
-                comment[i].setText(commentsData.get(i).getText());
+                comment[i].setText(comments.getComments().get(i).getText());
                 comment[i].setForeground(Color.ORANGE);
                 comment[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
-                comment[i].setBounds((int)metrics.commentBounds.getX(), startPositionY, (int)metrics.commentBounds.getWidth(), (int)metrics.commentBounds.getHeight());
+                comment[i].setBounds((int)metrics.commentBounds.getX(), startPositionY - metrics.screenHeight / 30, (int)metrics.commentBounds.getWidth(), (int)metrics.commentBounds.getHeight());
                 layeredPhotoPanel.setLayer(comment[i], 1);
                 layeredPhotoPanel.add(comment[i]);
 
-                startPositionY+=70;
+                startPositionY+=metrics.screenHeight / 15;
 
             }
 

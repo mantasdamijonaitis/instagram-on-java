@@ -8,34 +8,39 @@ import static java.lang.System.getProperty;
 
 public class AuthenticationProxy {
 
-    URL url;
+    URL url = null;
+    Proxy proxy;
 
-    Proxy proxy = getProxy();
+    public AuthenticationProxy(){
+
+    }
 
     Proxy getProxy() {
 
-        url = null;
 
-        try {
-            url = new URL(getProperty("proxy"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        if (System.getProperty("proxy") != null) {
 
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
 
-        Authenticator authenticator = new Authenticator() {
-
-            public PasswordAuthentication getPasswordAuthentication() {
-                return (new PasswordAuthentication(url.getUserInfo().split(":")[0],
-                        url.getUserInfo().split(":")[1].toCharArray()));
+            try {
+                url = new URL(getProperty("proxy"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
             }
-        };
 
-        Authenticator.setDefault(authenticator);
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
 
-        return proxy;
+            Authenticator authenticator = new Authenticator() {
+
+                public PasswordAuthentication getPasswordAuthentication() {
+                    return (new PasswordAuthentication(url.getUserInfo().split(":")[0],
+                            url.getUserInfo().split(":")[1].toCharArray()));
+                }
+            };
+
+            Authenticator.setDefault(authenticator);
+            return proxy;
+        } else return null;
 
     }
 
