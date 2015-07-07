@@ -1,6 +1,5 @@
 package insta;
 
-import com.sun.java.util.jar.pack.Attribute;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
 import org.jinstagram.entity.common.User;
@@ -23,28 +22,32 @@ public class PhotoFrame {
 
     JPanel photoPanel;
 
-    private JLabel pictureLabel;
-    private JLabel captionLabel;
-    private JLabel uploaderImageLabel;
-    private JLabel uploaderNameLabel;
-    private JLabel backgroundLabel;
-
     private MediaFeedData media;
 
     public PhotoFrame(MediaFeedData media) throws IOException {
 
         this.media = media;
-        LayoutMetrics metrics = initializeMetrics();
-        initializePhotoPanel(metrics);
-        initializeLayeredPane();
-        initializeMediaFields();
-        initializeBackground(metrics);
-        setMainPicture(media.getImages().getStandardResolution().getImageUrl(),metrics);
-        setCaption(media.getCaption(),metrics);
-        setUploaderName(media.getUser(),metrics);
-        setUploaderProfilePicture(media.getUser().getProfilePictureUrl(),metrics);
-        setComments(media.getComments(),metrics);
+        LayoutMetrics metrics = new LayoutMetrics();
 
+        Point screenDimensions = screenDimensionsToPoint();
+        
+        initializePhotoPanel(screenDimensions);
+        initializeLayeredPane();
+        initializeBackground(screenDimensions);
+        setMainPicture(media.getImages().getStandardResolution().getImageUrl(),metrics,screenDimensions);
+        setCaption(media.getCaption(),metrics,screenDimensions);
+        setUploaderName(media.getUser(),metrics,screenDimensions);
+        setUploaderProfilePicture(media.getUser().getProfilePictureUrl(),metrics,screenDimensions);
+        setComments(media.getComments(),metrics,screenDimensions);
+
+    }
+    
+    Point screenDimensionsToPoint(){
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        return new Point((int) screenSize.getWidth(), (int)screenSize.getHeight());
+        
     }
 
     public JPanel getCompletePhotoPanel(){
@@ -53,9 +56,12 @@ public class PhotoFrame {
 
     }
 
-    void setUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics) throws IOException {
+    void setUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics, Point screenDimensions) throws IOException {
 
-        uploaderImageLabel.setBounds(metrics.uploaderImageBounds);
+        JLabel uploaderImageLabel = new JLabel();
+        layeredPhotoPanel.setLayer(uploaderImageLabel, 1);
+
+        uploaderImageLabel.setBounds((metrics.getUploaderImageMetrics(screenDimensions)));
 
         URL userUrl = new URL(uploaderUrl);
 
@@ -66,9 +72,9 @@ public class PhotoFrame {
             URLConnection urlConnection = userUrl.openConnection(proxy);
             InputStream inStream = urlConnection.getInputStream();
 
-            Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.uploaderImageBounds.getWidth(), (int) metrics.uploaderImageBounds.getHeight(), Image.SCALE_SMOOTH);
+            Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.getUploaderImageMetrics(screenDimensions).getWidth(), (int) metrics.getUploaderImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH);
             uploaderImageLabel.setIcon(new ImageIcon(image));
-        } else uploaderImageLabel.setIcon(new ImageIcon(ImageIO.read(userUrl).getScaledInstance((int) metrics.uploaderImageBounds.getWidth(), (int) metrics.uploaderImageBounds.getHeight(), Image.SCALE_SMOOTH)));
+        } else uploaderImageLabel.setIcon(new ImageIcon(ImageIO.read(userUrl).getScaledInstance((int) metrics.getUploaderImageMetrics(screenDimensions).getWidth(), (int) metrics.getUploaderImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
 
 
 
@@ -76,27 +82,42 @@ public class PhotoFrame {
 
     }
 
-    void setCaption(Caption caption, LayoutMetrics metrics){
+    void setCaption(Caption caption, LayoutMetrics metrics, Point screenDimensions){
+
+        JLabel captionLabel = new JLabel();
+        layeredPhotoPanel.setLayer(captionLabel, 1);
+
+        captionLabel.setForeground(Color.ORANGE);
+        captionLabel.setFont(new Font("Tahoma", Font.PLAIN, 50));
 
         captionLabel.setText(caption.getText());
-        captionLabel.setBounds(metrics.captionBounds);
+        captionLabel.setBounds(metrics.getCaptionMetrics(screenDimensions));
         layeredPhotoPanel.add(captionLabel);
 
     }
 
-    void setUploaderName(User user, LayoutMetrics metrics){
+    void setUploaderName(User user, LayoutMetrics metrics, Point screenDimensions){
+
+        JLabel uploaderNameLabel = new JLabel();
+        uploaderNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        uploaderNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+        uploaderNameLabel.setForeground(Color.ORANGE);
+        layeredPhotoPanel.setLayer(uploaderNameLabel, 1);
 
         uploaderNameLabel.setText(user.getUserName());
-        uploaderNameLabel.setBounds(metrics.uploaderNameBounds);
+        uploaderNameLabel.setBounds(metrics.getUploaderNameMetrics(screenDimensions));
         layeredPhotoPanel.add(uploaderNameLabel);
 
     }
 
 
-    void setMainPicture(String imagePath, LayoutMetrics metrics) throws IOException {
+    void setMainPicture(String imagePath, LayoutMetrics metrics, Point screenDimensions) throws IOException {
+
+        JLabel pictureLabel = new JLabel();
+        layeredPhotoPanel.setLayer(pictureLabel, 1);
 
         URL url = new URL(imagePath);
-        pictureLabel.setBounds(metrics.imageBounds);
+        pictureLabel.setBounds(metrics.getImageMetrics(screenDimensions));
 
         if(System.getProperty("proxy")!=null) {
 
@@ -107,27 +128,16 @@ public class PhotoFrame {
             try {
                 pictureLabel.setIcon(new ImageIcon(
 
-                        ImageIO.read(inStream).getScaledInstance((int)metrics.imageBounds.getWidth(),(int)metrics.imageBounds.getHeight(), Image.SCALE_SMOOTH)));
+                        ImageIO.read(inStream).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(),(int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
 
-        else pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.imageBounds.getWidth(), (int)metrics.imageBounds.getHeight(), Image.SCALE_SMOOTH)));
+        else pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(), (int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
 
         layeredPhotoPanel.add(pictureLabel);
-
-    }
-
-    LayoutMetrics initializeMetrics(){
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        int width = (int)screenSize.getWidth();
-        int height = (int)screenSize.getHeight();
-
-        return new LayoutMetrics(width,height);
 
     }
 
@@ -138,22 +148,20 @@ public class PhotoFrame {
 
     }
 
-    void initializePhotoPanel(LayoutMetrics metrics){
+    void initializePhotoPanel(Point screenDimensions){
 
         photoPanel = new JPanel();
         photoPanel.setLayout(new CardLayout(0, 0));
-        photoPanel.setBounds(0, 0, metrics.screenWidth, metrics.screenHeight);
+        photoPanel.setBounds(0, 0, (int)screenDimensions.getX(), (int)screenDimensions.getY());
         photoPanel.setVisible(true);
 
     }
 
-   void initializeBackground(LayoutMetrics metrics){
+   void initializeBackground(Point screenDimensions){
 
-
-
-       backgroundLabel = new JLabel();
+       JLabel backgroundLabel = new JLabel();
        layeredPhotoPanel.setLayer(backgroundLabel, 0);
-       backgroundLabel.setBounds(0, 0, metrics.screenWidth, metrics.screenHeight);
+       backgroundLabel.setBounds(0, 0, (int)screenDimensions.getX(), (int)screenDimensions.getY());
 
        backgroundLabel.setOpaque(true);
        backgroundLabel.setBackground(Color.BLACK);
@@ -162,32 +170,10 @@ public class PhotoFrame {
 
    }
 
-    void initializeMediaFields(){
-
-        pictureLabel = new JLabel();
-        layeredPhotoPanel.setLayer(pictureLabel, 1);
-
-        captionLabel = new JLabel();
-        layeredPhotoPanel.setLayer(captionLabel, 1);
-
-        captionLabel.setForeground(Color.ORANGE);
-        captionLabel.setFont(new Font("Tahoma", Font.PLAIN, 50));
-
-        uploaderImageLabel = new JLabel();
-        layeredPhotoPanel.setLayer(uploaderImageLabel, 1);
-
-        uploaderNameLabel = new JLabel();
-        uploaderNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        uploaderNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        uploaderNameLabel.setForeground(Color.ORANGE);
-        layeredPhotoPanel.setLayer(uploaderNameLabel, 1);
-
-    }
-
-    void setComments(Comments comments, LayoutMetrics metrics) throws IOException{
+    void setComments(Comments comments, LayoutMetrics metrics, Point screenDimensions) throws IOException{
 
         int commentsCount = comments.getCount();
-        int startPositionY = (int)metrics.commenterImageBounds.getY();
+        int startPositionY = (int)metrics.getCommenterImageMetrics(screenDimensions).getY();
 
         if(commentsCount > 0){
 
@@ -209,22 +195,22 @@ public class PhotoFrame {
                     URLConnection urlConnection = commenterPictureUrl.openConnection(proxy);
                     InputStream inStream = urlConnection.getInputStream();
 
-                    Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.commenterImageBounds.getWidth(), (int) metrics.commenterImageBounds.getHeight(), Image.SCALE_SMOOTH);
+                    Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH);
 
                     commenterImage[i].setIcon(new ImageIcon(image));
-                } else commenterImage[i].setIcon(new ImageIcon(ImageIO.read(commenterPictureUrl).getScaledInstance((int) metrics.commenterImageBounds.getWidth(), (int) metrics.commenterImageBounds.getHeight(), Image.SCALE_SMOOTH)));
+                } else commenterImage[i].setIcon(new ImageIcon(ImageIO.read(commenterPictureUrl).getScaledInstance((int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
 
-                commenterImage[i].setBounds((int)metrics.commenterImageBounds.getX(), startPositionY, (int)metrics.commenterImageBounds.getWidth(), (int)metrics.commenterImageBounds.getHeight());
+                commenterImage[i].setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(), startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
                 layeredPhotoPanel.add(commenterImage[i]);
 
                 comment[i].setText(comments.getComments().get(i).getText());
                 comment[i].setForeground(Color.ORANGE);
                 comment[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
-                comment[i].setBounds((int)metrics.commentBounds.getX(), startPositionY - metrics.screenHeight / 30, (int)metrics.commentBounds.getWidth(), (int)metrics.commentBounds.getHeight());
+                comment[i].setBounds((int)metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int)screenDimensions.getY() / 30, (int)metrics.getCommentMetrics(screenDimensions).getWidth(), (int)metrics.getCommentMetrics(screenDimensions).getHeight());
                 layeredPhotoPanel.setLayer(comment[i], 1);
                 layeredPhotoPanel.add(comment[i]);
 
-                startPositionY+=metrics.screenHeight / 15;
+                startPositionY+=screenDimensions.getY() / 15;
 
             }
 

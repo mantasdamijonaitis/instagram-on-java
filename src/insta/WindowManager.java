@@ -21,36 +21,35 @@ public class WindowManager {
 
     public WindowManager() throws IOException {
 
-        final LayoutMetrics metrics = initializeMetrics();
-        initializeMainWindow(metrics);
-        loadLoginScreen(metrics);
-        launchSlideshowRoutine(metrics);
+        LayoutMetrics metrics = new LayoutMetrics();
+        Point screenDimensions = screenDimensionsToPoint();
+        initializeMainWindow(screenDimensions);
+        loadLoginScreen(screenDimensions);
+        launchSlideshowRoutine(screenDimensions);
 
     }
 
-
-
-    LayoutMetrics initializeMetrics(){
+    Point screenDimensionsToPoint(){
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        return new LayoutMetrics((int)screenSize.getWidth(),(int)screenSize.getHeight());
+
+        return new Point((int) screenSize.getWidth(), (int)screenSize.getHeight());
 
     }
 
-
-    void initializeMainWindow(LayoutMetrics metrics){
+    void initializeMainWindow(Point screenDimensions){
 
         mainWindow = new JFrame();
-        mainWindow.setBounds(0, 0, metrics.screenWidth, metrics.screenHeight);
+        mainWindow.setBounds(0, 0, (int)screenDimensions.getX(), (int)screenDimensions.getY());
         mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainWindow.setUndecorated(true);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
 
-    void loadLoginScreen(LayoutMetrics metrics) throws IOException {
+    void loadLoginScreen(Point screenDimensions) throws IOException {
 
-        loginScreen = new LoginScreen(metrics.screenWidth,metrics.screenHeight);
+        loginScreen = new LoginScreen((int)screenDimensions.getX(),(int)screenDimensions.getY());
 
         mainWindow.getContentPane().setLayout(new CardLayout(0, 0));
         mainWindow.getContentPane().add(loginScreen.getInitializedLoginPanel(), "name_123");
@@ -59,7 +58,7 @@ public class WindowManager {
 
     }
 
-    void launchSlideshowRoutine(final LayoutMetrics metrics){
+    void launchSlideshowRoutine(final Point screenDimensions){
 
         toContinue = true;
 
@@ -80,7 +79,7 @@ public class WindowManager {
                     try {
                         task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
                     } catch (InstagramException e1) {
-                        loginScreen.showFieldWithErrorMessage((int)metrics.screenWidth,(int)metrics.screenHeight,e1.toString());
+                        loginScreen.showFieldWithErrorMessage((int) screenDimensions.getX(), (int) screenDimensions.getY(), e1.toString());
                         mainWindow.setVisible(true);
                         toContinue = false;
                     }

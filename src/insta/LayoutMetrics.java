@@ -3,116 +3,81 @@ package insta;
 import java.awt.*;
 
 public class LayoutMetrics {
-	
-	int screenHeight;
-	int screenWidth;
 
-	public LayoutMetrics(int screenWidth, int screenHeight){
+	public LayoutMetrics(){
 		
+	}
+
+	Rectangle getImageMetrics(Point screenDimensions){
+
+		int imageX = (int)screenDimensions.getX() / 50;
+		int imageY = imageX + (int)screenDimensions.getY() / 20;
+
+		int imageBoundsX = ((int)screenDimensions.getX() / 2);
+		int imageBoundsY = (int)screenDimensions.getY() - imageY * 2;
 		
-		
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
-			
-			
-			if(screenWidth <= 0 && screenHeight <= 0){ 
-				
-				throw new IllegalArgumentException("Your screen resolution is nonsense xD");
-				
-			}
-		
-		calculateImageMetrics();
-		calculateCaptionMetrics();
-		calculateUploaderImageMetrics();
-		calculateCommenterImageMetrics();
-		calculateCommentMetrics();
-		calculateUploaderNameMetrics();
-		
+		return new Rectangle(imageX, imageY, imageBoundsX, imageBoundsY);
 		
 	}
 	
-	Rectangle imageBounds;
-	
-	Rectangle captionBounds;
-	
-	Rectangle uploaderImageBounds;
-	
-	Rectangle uploaderNameBounds;
-	
-	Rectangle commenterImageBounds;
-	
-	Rectangle commentBounds;
+	Rectangle getCaptionMetrics(Point screenDimensions){
 
-	void calculateImageMetrics(){
-
-		int imageX = this.screenWidth / 50;
-		int imageY = imageX + this.screenHeight / 20;
-
-		int imageBoundsX = (this.screenWidth / 2);
-		int imageBoundsY = this.screenHeight - imageY * 2;
-		
-		imageBounds = new Rectangle(imageX, imageY, imageBoundsX, imageBoundsY);
-		
-	}
-	
-	void calculateCaptionMetrics(){
-
-		int captionX = (int)this.imageBounds.getX();
+        int captionX = (int)getImageMetrics(screenDimensions).getX();
 		int captionY = 0;
 
-		int captionBoundsX = this.screenWidth / 2;
-		int captionBoundsY = this.screenHeight / 10;
+		int captionBoundsX = (int)screenDimensions.getX() / 2;
+		int captionBoundsY = (int)screenDimensions.getY() / 10;
 
-		captionBounds = new Rectangle(captionX, captionY, captionBoundsX, captionBoundsY);
+		return new Rectangle(captionX, captionY, captionBoundsX, captionBoundsY);
 		
 	}
 	
-	void calculateUploaderImageMetrics(){
+	Rectangle getUploaderImageMetrics(Point screenDimensions){
 		
-		int uploaderImageX = this.screenWidth / 2 + this.screenWidth / 6;
-		int uploaderImageY = (int)imageBounds.getY() + this.screenHeight / 12;
+		int uploaderImageX = (int)(screenDimensions.getX() / 2 + screenDimensions.getX() / 6);
+		int uploaderImageY = (int)getImageMetrics(screenDimensions).getY() + (int)screenDimensions.getY() / 12;
 		
-		int uploaderImageBoundsX = this.screenWidth / 15;
+		int uploaderImageBoundsX = (int)screenDimensions.getX() / 15;
 		int uploaderImageBoundsY = uploaderImageBoundsX;
 		
-		uploaderImageBounds = new Rectangle(uploaderImageX, uploaderImageY, uploaderImageBoundsX, uploaderImageBoundsY);
+		return new Rectangle(uploaderImageX, uploaderImageY, uploaderImageBoundsX, uploaderImageBoundsY);
 		
 	}
 	
-	void calculateCommenterImageMetrics(){
+	Rectangle getCommenterImageMetrics(Point screenDimensions){
 		
-		int commenterImageX = (int)uploaderImageBounds.getX();
-		int commenterImageY = (int)uploaderImageBounds.getY() + this.screenHeight / 5;
+		int commenterImageX = (int)getUploaderImageMetrics(screenDimensions).getX();
+		int commenterImageY = (int)getUploaderImageMetrics(screenDimensions).getY() + (int)screenDimensions.getY() / 5;
 		
-		int commenterImageBoundsX = (int)uploaderImageBounds.getWidth() / 2;
+		int commenterImageBoundsX = (int)getUploaderImageMetrics(screenDimensions).getWidth() / 2;
 		int commenterImageBoundsY = commenterImageBoundsX;
 		
-		commenterImageBounds = new Rectangle(commenterImageX, commenterImageY, commenterImageBoundsX, commenterImageBoundsY);
+		return new Rectangle(commenterImageX, commenterImageY, commenterImageBoundsX, commenterImageBoundsY);
 		
 	}
 	
-	void calculateCommentMetrics(){
+	Rectangle getCommentMetrics(Point screenDimensions){
 		
-		int commentX = (int)commenterImageBounds.getX() + this.screenWidth / 20;
-		int commentY = (int)commenterImageBounds.getY();
+		int commentX = (int)getCommenterImageMetrics(screenDimensions).getX() + (int)screenDimensions.getX() / 20;
+		int commentY = (int)getCommenterImageMetrics(screenDimensions).getY();
 		
-		int commentBoundsX = (int)captionBounds.getWidth();
-		int commentBoundsY = (int)captionBounds.getHeight();
+		int commentBoundsX = (int)getCaptionMetrics(screenDimensions).getWidth();
+		int commentBoundsY = (int)getCaptionMetrics(screenDimensions).getHeight();
 		
-		commentBounds = new Rectangle(commentX,commentY,commentBoundsX,commentBoundsY);
+		return new Rectangle(commentX,commentY,commentBoundsX,commentBoundsY);
 		
 		
 	}
 	
-	void calculateUploaderNameMetrics(){
+	Rectangle getUploaderNameMetrics(Point screenDimensions){
 		
-		int uploaderNameX = (int)uploaderImageBounds.getX() + this.screenWidth / 10;
-		int uploaderNameY = (int)uploaderImageBounds.getY() - this.screenWidth / 30;
+		int uploaderNameX = (int)getUploaderImageMetrics(screenDimensions).getX() + (int)screenDimensions.getX() / 10;
+		int uploaderNameY = (int)getUploaderImageMetrics(screenDimensions).getY() - (int)screenDimensions.getX() / 30;
 		 
-		int uploaderNameBoundsX = (int)uploaderImageBounds.getWidth() * 2;
-		int uploaderNameBoundsY = (int)uploaderImageBounds.getHeight() * 2;
+		int uploaderNameBoundsX = (int)getUploaderImageMetrics(screenDimensions).getWidth() * 2;
+		int uploaderNameBoundsY = (int)getUploaderImageMetrics(screenDimensions).getHeight() * 2;
 		
-		uploaderNameBounds = new Rectangle(uploaderNameX, uploaderNameY, uploaderNameBoundsX, uploaderNameBoundsY);
+		return new Rectangle(uploaderNameX, uploaderNameY, uploaderNameBoundsX, uploaderNameBoundsY);
 		
 	}
 	
