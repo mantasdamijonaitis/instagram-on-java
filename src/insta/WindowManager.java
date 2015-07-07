@@ -103,15 +103,7 @@ public class WindowManager {
                             }
                             mainWindow.getContentPane().removeAll();
                             mainWindow.getContentPane().add(photoPanel);
-                            //mainWindow.add(photoPanel);
-                            //frame.getContentPane().setLayout(new CardLayout(0, 0));
 
-                           // mainWindow.remove(loginScreen.getInitializedLoginPanel());
-                           // mainWindow.add(photoPanel);
-                           // mainWindow.revalidate();
-                           // mainWindow.repaint();
-
-                            //frame.getContentPane().setLayout(new CardLayout(0, 0));
                             mainWindow.setVisible(true);
 
                         }
