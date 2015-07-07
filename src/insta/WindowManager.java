@@ -21,6 +21,8 @@ public class WindowManager {
     private JPanel photoPanel;
     private JTextField textField;
 
+    boolean toContinue;
+
     public WindowManager() throws IOException {
 
         initializeMetrics();
@@ -67,7 +69,9 @@ public class WindowManager {
 
     void launchSlideshowRoutine(){
 
-        JButton loginScreenButton = loginScreen.getInitializetButton();
+        toContinue = true;
+
+        final JButton loginScreenButton = loginScreen.getInitializetButton();
 
         loginScreenButton.addActionListener(new ActionListener() {
 
@@ -75,40 +79,23 @@ public class WindowManager {
 
                 textField = loginScreen.getInitializetTextField();
 
-
                 if (textField.getText().toString().length() > 0) {
 
-                    System.out.println("clicked");
+                    //System.out.println("clicked");
+
+                    java.util.Timer timer = new java.util.Timer();
+                    RepeatableTask task = null;
 
                     try {
-                        iterator = new InstagramFeedIterator(textField.getText().toString());
+                        task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
                     } catch (InstagramException e1) {
-                        e1.printStackTrace();
+                        JLabel errorMessage = loginScreen.showFieldWithErrorMessage(e1.toString());
+                        mainWindow.setVisible(true);
+                        toContinue = false;
                     }
-                    java.util.Timer timer = new java.util.Timer();
-                    timer.schedule(new TimerTask() {
-
-                        @Override
-                        public void run() {
-
-                            try {
-                                if (iterator.hasNext()) {
-                                    photoPanel = new PhotoFrame(iterator.next()).getCompletePhotoPanel();
-                                } else {
-                                    iterator = new InstagramFeedIterator("testingnewestapp");
-                                    photoPanel = new PhotoFrame(iterator.next()).getCompletePhotoPanel();
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            mainWindow.getContentPane().removeAll();
-                            mainWindow.getContentPane().add(photoPanel);
-
-                            mainWindow.setVisible(true);
-
-                        }
-
-                    }, 0, 3000);
+                    
+                    if(toContinue)
+                    timer.schedule(task, 0, 3000);
 
                 }
 

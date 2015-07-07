@@ -125,5 +125,20 @@ public class LoginScreen {
 		return instagramTagField;
 		
 	}
+
+	JLabel showFieldWithErrorMessage(String message){
+
+		JLabel errorMessageField = new JLabel();
+		errorMessageField.setBounds(width / 2 - width / 10, height / 3 + instagramTagField.getHeight() + height / 15, width / 5, height / 20);
+		errorMessageField.setForeground(Color.ORANGE);
+		errorMessageField.setVisible(true);
+		errorMessageField.setText(message);
+		layeredLoginPane.setLayer(errorMessageField, 1);
+		layeredLoginPane.add(errorMessageField);
+		System.out.println("info from logscr class: "+errorMessageField.toString());
+
+		return errorMessageField;
+
+	}
 	
 }
