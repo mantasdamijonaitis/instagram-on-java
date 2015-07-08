@@ -59,19 +59,7 @@ public class WindowManager {
 
                 if (textField.getText().toString().length() > 0) {
 
-                    Timer timer = new java.util.Timer();
-                    RepeatableTask task = null;
-
-                    try {
-                        task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
-                    } catch (InstagramException e1) {
-                        loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
-                        mainWindow.setVisible(true);
-                        toContinue = false;
-                    }
-
-                    if(toContinue)
-                    timer.schedule(task, 0, 3000);
+                    launchTimerTask(textField, photoPanel, mainWindow, loginScreen, screenDimensions);
 
                 }
 
@@ -79,6 +67,22 @@ public class WindowManager {
 
         });
 
+    }
+
+    private void launchTimerTask(JTextField textField, JPanel photoPanel, JFrame mainWindow, LoginScreen loginScreen, Dimension2D screenDimensions) {
+        Timer timer = new Timer();
+        RepeatableTask task = null;
+
+        try {
+            task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
+        } catch (InstagramException e1) {
+            loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
+            mainWindow.setVisible(true);
+            toContinue = false;
+        }
+
+        if(toContinue)
+        timer.schedule(task, 0, 3000);
     }
 
 }
