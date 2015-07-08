@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Dimension2D;
 import java.io.IOException;
-import java.util.*;
 import java.util.Timer;
 
 
@@ -14,53 +14,39 @@ import java.util.Timer;
  */
 public class WindowManager {
 
-    private JFrame mainWindow;
-    private LoginScreen loginScreen;
-
-    boolean toContinue;
+    boolean toContinue = true;
 
     public WindowManager() throws IOException {
 
-        LayoutMetrics metrics = new LayoutMetrics();
-        Point screenDimensions = screenDimensionsToPoint();
-        initializeMainWindow(screenDimensions);
-        loadLoginScreen(screenDimensions);
-        launchSlideshowRoutine(screenDimensions);
+        Dimension2D screenDimensions = screenDimensionsToObject();
+        LoginScreen loginScreen = new LoginScreen(screenDimensions);
+        System.out.println(loginScreen.getInitializedLoginPanel().toString());
+        JFrame mainWindow = initializeMainWindow(screenDimensions,loginScreen);
+        launchSlideshowRoutine(screenDimensions,mainWindow,loginScreen);
 
     }
 
-    Point screenDimensionsToPoint(){
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        return new Point((int) screenSize.getWidth(), (int)screenSize.getHeight());
-
+    Dimension2D screenDimensionsToObject(){
+        return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
-    void initializeMainWindow(Point screenDimensions){
+    JFrame initializeMainWindow(Dimension2D screenDimensions, LoginScreen loginScreen){
 
-        mainWindow = new JFrame();
-        mainWindow.setBounds(0, 0, (int)screenDimensions.getX(), (int)screenDimensions.getY());
+        JFrame mainWindow = new JFrame();
+        mainWindow.setBounds(0, 0, (int)screenDimensions.getWidth(), (int)screenDimensions.getHeight());
         mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainWindow.setUndecorated(true);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-    }
-
-    void loadLoginScreen(Point screenDimensions) throws IOException {
-
-        loginScreen = new LoginScreen((int)screenDimensions.getX(),(int)screenDimensions.getY());
-
         mainWindow.getContentPane().setLayout(new CardLayout(0, 0));
         mainWindow.getContentPane().add(loginScreen.getInitializedLoginPanel(), "name_123");
 
         mainWindow.setVisible(true);
 
+        return mainWindow;
+
     }
 
-    void launchSlideshowRoutine(final Point screenDimensions){
-
-        toContinue = true;
+    void launchSlideshowRoutine(final Dimension2D screenDimensions,final JFrame mainWindow,final LoginScreen loginScreen){
 
         final JButton loginScreenButton = loginScreen.getInitializetButton();
 
@@ -79,7 +65,7 @@ public class WindowManager {
                     try {
                         task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
                     } catch (InstagramException e1) {
-                        loginScreen.showFieldWithErrorMessage((int) screenDimensions.getX(), (int) screenDimensions.getY(), e1.toString());
+                        loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
                         mainWindow.setVisible(true);
                         toContinue = false;
                     }

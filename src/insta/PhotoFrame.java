@@ -7,6 +7,7 @@ import org.jinstagram.entity.users.feed.MediaFeedData;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
@@ -22,14 +23,11 @@ public class PhotoFrame {
 
     JPanel photoPanel;
 
-    private MediaFeedData media;
-
     public PhotoFrame(MediaFeedData media) throws IOException {
 
-        this.media = media;
         LayoutMetrics metrics = new LayoutMetrics();
 
-        Point screenDimensions = screenDimensionsToPoint();
+        Dimension2D screenDimensions = screenDimensionsToObject();
         
         initializePhotoPanel(screenDimensions);
         initializeLayeredPane();
@@ -42,11 +40,8 @@ public class PhotoFrame {
 
     }
     
-    Point screenDimensionsToPoint(){
-        
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        
-        return new Point((int) screenSize.getWidth(), (int)screenSize.getHeight());
+    Dimension2D screenDimensionsToObject(){
+        return Toolkit.getDefaultToolkit().getScreenSize();
         
     }
 
@@ -56,7 +51,7 @@ public class PhotoFrame {
 
     }
 
-    void setUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics, Point screenDimensions) throws IOException {
+    void setUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
 
         JLabel uploaderImageLabel = new JLabel();
         layeredPhotoPanel.setLayer(uploaderImageLabel, 1);
@@ -82,7 +77,7 @@ public class PhotoFrame {
 
     }
 
-    void setCaption(Caption caption, LayoutMetrics metrics, Point screenDimensions){
+    void setCaption(Caption caption, LayoutMetrics metrics, Dimension2D screenDimensions){
 
         JLabel captionLabel = new JLabel();
         layeredPhotoPanel.setLayer(captionLabel, 1);
@@ -96,7 +91,7 @@ public class PhotoFrame {
 
     }
 
-    void setUploaderName(User user, LayoutMetrics metrics, Point screenDimensions){
+    void setUploaderName(User user, LayoutMetrics metrics, Dimension2D screenDimensions){
 
         JLabel uploaderNameLabel = new JLabel();
         uploaderNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -111,7 +106,7 @@ public class PhotoFrame {
     }
 
 
-    void setMainPicture(String imagePath, LayoutMetrics metrics, Point screenDimensions) throws IOException {
+    void setMainPicture(String imagePath, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
 
         JLabel pictureLabel = new JLabel();
         layeredPhotoPanel.setLayer(pictureLabel, 1);
@@ -148,20 +143,20 @@ public class PhotoFrame {
 
     }
 
-    void initializePhotoPanel(Point screenDimensions){
+    void initializePhotoPanel(Dimension2D screenDimensions){
 
         photoPanel = new JPanel();
         photoPanel.setLayout(new CardLayout(0, 0));
-        photoPanel.setBounds(0, 0, (int)screenDimensions.getX(), (int)screenDimensions.getY());
+        photoPanel.setBounds(0, 0, (int)screenDimensions.getWidth(), (int)screenDimensions.getHeight());
         photoPanel.setVisible(true);
 
     }
 
-   void initializeBackground(Point screenDimensions){
+   void initializeBackground(Dimension2D screenDimensions){
 
        JLabel backgroundLabel = new JLabel();
        layeredPhotoPanel.setLayer(backgroundLabel, 0);
-       backgroundLabel.setBounds(0, 0, (int)screenDimensions.getX(), (int)screenDimensions.getY());
+       backgroundLabel.setBounds(0, 0, (int)screenDimensions.getWidth(), (int)screenDimensions.getHeight());
 
        backgroundLabel.setOpaque(true);
        backgroundLabel.setBackground(Color.BLACK);
@@ -170,7 +165,7 @@ public class PhotoFrame {
 
    }
 
-    void setComments(Comments comments, LayoutMetrics metrics, Point screenDimensions) throws IOException{
+    void setComments(Comments comments, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException{
 
         int commentsCount = comments.getCount();
         int startPositionY = (int)metrics.getCommenterImageMetrics(screenDimensions).getY();
@@ -206,11 +201,11 @@ public class PhotoFrame {
                 comment[i].setText(comments.getComments().get(i).getText());
                 comment[i].setForeground(Color.ORANGE);
                 comment[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
-                comment[i].setBounds((int)metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int)screenDimensions.getY() / 30, (int)metrics.getCommentMetrics(screenDimensions).getWidth(), (int)metrics.getCommentMetrics(screenDimensions).getHeight());
+                comment[i].setBounds((int) metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int) screenDimensions.getHeight() / 30, (int) metrics.getCommentMetrics(screenDimensions).getWidth(), (int) metrics.getCommentMetrics(screenDimensions).getHeight());
                 layeredPhotoPanel.setLayer(comment[i], 1);
                 layeredPhotoPanel.add(comment[i]);
 
-                startPositionY+=screenDimensions.getY() / 15;
+                startPositionY+=screenDimensions.getHeight() / 15;
 
             }
 

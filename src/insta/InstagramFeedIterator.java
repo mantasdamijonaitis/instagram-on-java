@@ -12,8 +12,6 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 	private String maxTagId;
 	private String tagName;
 
-	private TagMediaFeed tagMediaFeed;
-
 	public InstagramFeedIterator(String tagName) throws InstagramException { /// sprest pagal api
 		this.tagName = tagName;
 		loadNextMediaPage();
@@ -35,7 +33,7 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 	}
 
 	private void loadNextMediaPage() throws InstagramException {
-		tagMediaFeed = loadMedia(tagName, maxTagId);
+		TagMediaFeed tagMediaFeed = loadMedia(tagName, maxTagId);
 		mediaIterator = tagMediaFeed.getData().iterator();
 		maxTagId = tagMediaFeed.getPagination().getNextMaxTagId();
 	}
@@ -43,7 +41,7 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 	public static TagMediaFeed loadMedia(String tagName, String maxTagId) throws InstagramException {
 		Instagram instagram = new Instagram(System.getProperty("clientId"));
 		if(System.getProperty("proxy") != null)
-			instagram.setRequestProxy(new AuthenticationProxy().proxy);
+			instagram.setRequestProxy(new AuthenticationProxy().getProxy());
 		return instagram.getRecentMediaTags(tagName, null, maxTagId);
 	}
 

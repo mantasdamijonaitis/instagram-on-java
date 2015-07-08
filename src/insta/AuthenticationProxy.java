@@ -1,16 +1,11 @@
 package insta;
 
-import org.jinstagram.Instagram;
-
 import java.net.*;
 
 import static java.lang.System.getProperty;
 
 public class AuthenticationProxy {
-
     URL url = null;
-    Proxy proxy;
-
     public AuthenticationProxy(){
 
     }

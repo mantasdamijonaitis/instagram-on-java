@@ -1,8 +1,7 @@
 package insta;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,97 +10,91 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class LoginScreen {
-	
-		JPanel loginPanel;
 
-		JButton launchButton;
+	JButton launchButton;
+	JTextField instagramTagField;
+	JLayeredPane layeredLoginPane;
+	JPanel loginPanel;
 
-		JTextField instagramTagField;
+	public LoginScreen(Dimension2D dimension) throws IOException{
+		this.loginPanel = initializeFrame(dimension);
+		this.instagramTagField = initializeInputField(dimension);
+		this.launchButton = initializeButton(dimension);
+		this.loginPanel = initializeFrame(dimension);
+		this.layeredLoginPane = addFieldsToLayeredPane(dimension, loginPanel, instagramTagField, launchButton);
 
-		private JLayeredPane layeredLoginPane;
-		
-	public LoginScreen(int width,int height) throws IOException{
-       
-		initializeFrame(width, height);
-		initializeLayout();
-		initializeBackground(width,height);
-		initializeWelcomeText(width,height);
-		initializeInputField(width,height);
-		initializeButton(width,height);
 		
 	}
 	
-	void initializeFrame(int width, int height){
-		
-		loginPanel = new JPanel();
-    	loginPanel.setSize(width, height);
-    	loginPanel.setVisible(true);
-		
-	}
-	
-	void initializeLayout(){
-		
+	JPanel initializeFrame(Dimension2D dimension){
+
+		JPanel loginPanel = new JPanel();
+		loginPanel.setSize((int) dimension.getWidth(), (int) dimension.getHeight());
 		loginPanel.setLayout(new CardLayout(0, 0));
-		layeredLoginPane = new JLayeredPane();
-        loginPanel.add(layeredLoginPane, "name_123");
-		
-	}
-	
-	void initializeBackground(int width, int height) throws IOException{
-		
-		JLabel backgroundLabel = new JLabel("New label");
-        layeredLoginPane.setLayer(backgroundLabel, 0);
-        backgroundLabel.setBounds(0, 0, width, height);
+    	loginPanel.setVisible(true);
 
-        backgroundLabel.setOpaque(true);
-        backgroundLabel.setBackground(Color.BLACK);
-        
-        layeredLoginPane.add(backgroundLabel);
+		return loginPanel;
 		
 	}
 	
-	void initializeWelcomeText(int width, int height){
-		
+	JLayeredPane addFieldsToLayeredPane(Dimension2D dimension, JPanel loginPanel, JTextField instagramTagField, JButton launchButton) throws IOException {
+
+		JLayeredPane layeredLoginPane;
+		layeredLoginPane = new JLayeredPane();
+		loginPanel.add(layeredLoginPane, "name_123"); /// add this later!
+
+		JLabel backgroundLabel = new JLabel("New label");
+		layeredLoginPane.setLayer(backgroundLabel, 0);
+		backgroundLabel.setBounds(0, 0, (int) dimension.getWidth(), (int) dimension.getHeight());
+
+		backgroundLabel.setOpaque(true);
+		backgroundLabel.setBackground(Color.BLACK);
+
+		layeredLoginPane.add(backgroundLabel);
+
 		JLabel welcomeTextLabel = new JLabel("Welcome using PicSharing Tool! To begin, enter instagram tag below:");
-        layeredLoginPane.setLayer(welcomeTextLabel, 1);
-        welcomeTextLabel.setBounds(width / 8, height / 8, width, height / 4);
-        
-        welcomeTextLabel.setText("Welcome using PicSharing Tool! To begin, enter instagram tag below:");
-        welcomeTextLabel.setForeground(Color.ORANGE);
-        welcomeTextLabel.setFont(new Font("Tahoma", Font.PLAIN, 50));
-        
-        layeredLoginPane.add(welcomeTextLabel);
-		
+		layeredLoginPane.setLayer(welcomeTextLabel, 1);
+		welcomeTextLabel.setBounds((int) dimension.getWidth() / 8, (int) dimension.getHeight() / 8, (int) dimension.getWidth(), (int) dimension.getHeight() / 4);
+
+		welcomeTextLabel.setText("Welcome using PicSharing Tool! To begin, enter instagram tag below:");
+		welcomeTextLabel.setForeground(Color.ORANGE);
+		welcomeTextLabel.setFont(new Font("Tahoma", Font.PLAIN, 50));
+
+		layeredLoginPane.add(welcomeTextLabel);
+
+		layeredLoginPane.setLayer(instagramTagField, 1);//
+		layeredLoginPane.add(instagramTagField);
+
+		layeredLoginPane.setLayer(launchButton, 1);//
+		layeredLoginPane.add(launchButton);
+
+		return layeredLoginPane;
+
 	}
+
 	
-	void initializeInputField(int width, int height){
-		
-		instagramTagField = new JTextField();
-        layeredLoginPane.setLayer(instagramTagField, 1);
-        instagramTagField.setBounds(width / 2 - width / 10, height / 3, width / 5, height / 20);
+	JTextField initializeInputField(Dimension2D dimension){
+
+		JTextField instagramTagField = new JTextField();
+		instagramTagField.setBounds((int) dimension.getWidth() / 2 - (int) dimension.getWidth() / 10, (int) dimension.getHeight() / 3, (int) dimension.getWidth() / 5, (int) dimension.getHeight() / 20);
         instagramTagField.setOpaque(false);
-        instagramTagField.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        instagramTagField.setCaretColor(Color.ORANGE);
-        instagramTagField.setForeground(Color.ORANGE);
+		instagramTagField.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		instagramTagField.setCaretColor(Color.ORANGE);
+		instagramTagField.setForeground(Color.ORANGE);
         instagramTagField.setColumns(10);
         instagramTagField.setText("vilniuscc");
-        layeredLoginPane.add(instagramTagField);
+
+		return instagramTagField;
 		
 	}
 	
-	void initializeButton(int width, int height){
+	JButton initializeButton(Dimension2D dimension){
 		
-		launchButton = new JButton("Start!");
-        layeredLoginPane.setLayer(launchButton, 1);
-        launchButton.setBounds(width / 2 - width / 10, height / 3 + height / 20 + height / 30, width / 5, height / 20);
-        launchButton.setBackground(Color.ORANGE);
-        layeredLoginPane.add(launchButton);
-		
-	}
-	
-	JPanel getInitializedLoginPanel(){
-		
-		return loginPanel;
+		JButton launchButton = new JButton("Start!");
+		launchButton.setBounds((int) (dimension.getWidth() / 2 - dimension.getWidth() / 10), (int) (dimension.getHeight() / 3 + dimension.getHeight() / 20 + dimension.getHeight() / 30), (int) (dimension.getWidth() / 5), (int) (dimension.getHeight() / 20));
+		launchButton.setBackground(Color.ORANGE);
+
+		return launchButton;
 		
 	}
 	
@@ -110,6 +103,12 @@ public class LoginScreen {
 		return launchButton;
 		
 	}
+
+	JPanel getInitializedLoginPanel(){
+
+		return  loginPanel;
+
+	}
 	
 	JTextField getInitializetTextField(){
 		
@@ -117,18 +116,16 @@ public class LoginScreen {
 		
 	}
 
-	JLabel showFieldWithErrorMessage(int width, int height,String message){
+	void showFieldWithErrorMessage(Dimension2D dimension,String message){
 
 		JLabel errorMessageField = new JLabel();
-		errorMessageField.setBounds(width / 2 - width / 10, height / 3 + instagramTagField.getHeight() + height / 15, width / 5, height / 20);
+		errorMessageField.setBounds((int)(dimension.getWidth() / 2 - dimension.getWidth() / 10), (int)(dimension.getHeight() / 3 + instagramTagField.getHeight() + dimension.getHeight() / 15), (int)(dimension.getWidth()), (int)(dimension.getHeight() / 20));
 		errorMessageField.setForeground(Color.ORANGE);
 		errorMessageField.setVisible(true);
 		errorMessageField.setText(message);
 		layeredLoginPane.setLayer(errorMessageField, 1);
 		layeredLoginPane.add(errorMessageField);
 		System.out.println("info from logscr class: "+errorMessageField.toString());
-
-		return errorMessageField;
 
 	}
 	
