@@ -42,13 +42,10 @@ public class PhotoFrame {
     
     Dimension2D screenDimensionsToObject(){
         return Toolkit.getDefaultToolkit().getScreenSize();
-        
     }
 
     public JPanel getCompletePhotoPanel(){
-
         return photoPanel;
-
     }
 
     void setUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {

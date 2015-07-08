@@ -8,16 +8,30 @@ import org.jinstagram.exceptions.InstagramException;
 
 public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 
+	private final Instagram instagram;
 	private Iterator<MediaFeedData> mediaIterator;
 	private String maxTagId;
 	private String tagName;
+	private int pageSize;
 
-	public InstagramFeedIterator(String tagName) throws InstagramException { /// sprest pagal api
+
+	public InstagramFeedIterator(Instagram instagram, String tagName, int pageSize) throws InstagramException { /// sprest pagal api
+		this.instagram = instagram;
 		this.tagName = tagName;
+		this.pageSize = pageSize;
 		loadNextMediaPage();
 	}
 
-	@Override
+	private void loadNextMediaPage() throws InstagramException {
+		TagMediaFeed tagMediaFeed = loadMedia(tagName, maxTagId, pageSize);
+		mediaIterator = tagMediaFeed.getData().iterator();
+		maxTagId = tagMediaFeed.getPagination().getNextMaxTagId();
+	}
+
+	public TagMediaFeed loadMedia(String tagName, String maxTagId,int amount) throws InstagramException {
+		return instagram.getRecentMediaTags(tagName, null, maxTagId, amount);
+	}
+
 	public boolean hasNext() {
 		if (mediaIterator.hasNext()) {
 			return true;
@@ -32,26 +46,11 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 		return false;
 	}
 
-	private void loadNextMediaPage() throws InstagramException {
-		TagMediaFeed tagMediaFeed = loadMedia(tagName, maxTagId);
-		mediaIterator = tagMediaFeed.getData().iterator();
-		maxTagId = tagMediaFeed.getPagination().getNextMaxTagId();
-	}
-
-	public static TagMediaFeed loadMedia(String tagName, String maxTagId) throws InstagramException {
-		Instagram instagram = new Instagram(System.getProperty("clientId"));
-		if(System.getProperty("proxy") != null)
-			instagram.setRequestProxy(new AuthenticationProxy().getProxy());
-		return instagram.getRecentMediaTags(tagName, null, maxTagId);
-	}
-
-	@Override
 	public MediaFeedData next() {
 			hasNext();
 			return mediaIterator.next();
 	}
 
-	@Override
 	public void remove() {
 	}
 

@@ -1,11 +1,21 @@
 package insta;
 
+import org.jinstagram.Instagram;
+import org.jinstagram.entity.common.Pagination;
+import org.jinstagram.entity.tags.TagMediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -13,69 +23,45 @@ import org.junit.Test;
  */
 public class InstagramFeedIteratorTest {
 
+    @Mock Instagram instagram;
+    @Mock TagMediaFeed mediaFeed1;
+    @Mock TagMediaFeed mediaFeed2;
+    @Mock Pagination pagination1;
+    @Mock Pagination pagination2;
+
     @Before
-    public void before() {
+    public void before() throws InstagramException {
+        MockitoAnnotations.initMocks(this);
+
         System.setProperty("clientId", "3dc6dd309cb54342b21d9ae74bd0902f");
 
+        when(instagram.getRecentMediaTags("vilniuscc", null, null, 5)).thenReturn(mediaFeed1);
+        when(instagram.getRecentMediaTags("vilniuscc", null, "NEXT_TAG_ID", 5)).thenReturn(mediaFeed2);
+
+        MediaFeedData data = new MediaFeedData();
+        List<MediaFeedData> dataList = Arrays.asList(data, data, data, data, data);
+
+        when(mediaFeed1.getData()).thenReturn(dataList);
+        when(mediaFeed1.getPagination()).thenReturn(pagination1);
+        when(pagination1.getNextMaxTagId()).thenReturn("NEXT_TAG_ID");
+
+        when(mediaFeed2.getData()).thenReturn(dataList);
+        when(mediaFeed2.getPagination()).thenReturn(pagination2);
+        when(pagination2.getNextMaxTagId()).thenReturn(null);
     }
 
     @Test
-    public void testConnection() throws InstagramException {
-        InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
-        assertNotNull(iterator);
-    }
-
-    @Test
-    public void testNext() throws InstagramException {
-        InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
-        MediaFeedData mediaData = iterator.next();
-        assertNotNull(mediaData);
-    }
-
-    @Test
-    public void testIsComplete() throws InstagramException {
-        InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
-        int limit = 1000;
-        int count = 0;
-
-
-        while(iterator.hasNext() && count < limit) {
-            iterator.next();
-            count++;
-        }
-        assertTrue("Count exceeds limit", count < limit);
-    }
-
-
-
-    @Test
-    public void testRetrievesMoreThan90() throws InstagramException {
-
-        InstagramFeedIterator iterator = new InstagramFeedIterator("vilniuscc");
+    public void testRetrieves10() throws InstagramException {
+        InstagramFeedIterator iterator = new InstagramFeedIterator(instagram, "vilniuscc", 5);
         int counter = 0;
-
-        while(iterator.hasNext()){
-            counter++;
+        while (iterator.hasNext()) {
             iterator.next();
+            counter++;
         }
 
-        System.out.println(counter);
-        assertTrue("Result is over 90", counter > 90);
+        assertEquals(10, counter);
+        verify(instagram, times(2)).getRecentMediaTags(eq("vilniuscc"), any(String.class), any(String.class), eq(5L));
 
-    }
-
-    @Test
-    public void testRetrievesAlmostInfinity() throws InstagramException {
-
-        InstagramFeedIterator iterator = new InstagramFeedIterator("selfie");
-        int counter = 0;
-
-        while(iterator.hasNext() && counter <= 1000){
-            counter++;
-            iterator.next();
-        }
-
-        assertTrue("result is over 300", counter > 300);
     }
 
 }

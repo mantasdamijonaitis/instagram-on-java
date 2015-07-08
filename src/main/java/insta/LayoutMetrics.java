@@ -11,31 +11,28 @@ public class LayoutMetrics {
 
     Rectangle getImageMetrics(Dimension2D screenDimensions) {
 
-        int imageX = (int) screenDimensions.getWidth() / 50;
-        int imageY = imageX + (int) screenDimensions.getHeight() / 20;
-
-        int imageBoundsX = ((int) screenDimensions.getWidth() / 2);
-        int imageBoundsY = (int) screenDimensions.getHeight() - imageY * 2;
-
-        return new Rectangle((int) screenDimensions.getWidth() / 50, imageY, imageBoundsX, imageBoundsY);
+        return new Rectangle(
+                (int) screenDimensions.getWidth() / 50,
+                (int) screenDimensions.getWidth() / 50 + (int) screenDimensions.getHeight() / 20,
+                ((int) screenDimensions.getWidth() / 2),
+                (int) (screenDimensions.getHeight() * 9/10 - screenDimensions.getWidth() / 25));
 
     }
 
     Rectangle getCaptionMetrics(Dimension2D screenDimensions) {
 
-        int captionX = (int) getImageMetrics(screenDimensions).getX();
-        int captionY = 0;
-
-        int captionBoundsX = (int) screenDimensions.getWidth() / 2;
-        int captionBoundsY = (int) screenDimensions.getHeight() / 10;
-
-        return new Rectangle(captionX, captionY, captionBoundsX, captionBoundsY);
+        return new Rectangle(
+                (int) getImageMetrics(screenDimensions).getX(),
+                0,
+                (int) screenDimensions.getWidth() / 2,
+                (int) screenDimensions.getHeight() / 10);
 
     }
 
     Rectangle getUploaderImageMetrics(Dimension2D screenDimensions) {
 
-        return new Rectangle((int) (screenDimensions.getWidth() / 2 + screenDimensions.getHeight() / 6),
+        return new Rectangle(
+                (int) (screenDimensions.getWidth() / 2 + screenDimensions.getHeight() / 6),
                 (int) getImageMetrics(screenDimensions).getY() + (int) screenDimensions.getHeight() / 12,
                 (int) screenDimensions.getWidth() / 15,
                 (int) screenDimensions.getWidth() / 15);
@@ -44,22 +41,21 @@ public class LayoutMetrics {
 
     Rectangle getCommenterImageMetrics(Dimension2D screenDimensions) {
 
-        int commenterImageX = (int) getUploaderImageMetrics(screenDimensions).getX();
-        int commenterImageY = (int) getUploaderImageMetrics(screenDimensions).getY() + (int) screenDimensions.getHeight() / 5;
-
-        int commenterImageBoundsX = (int) getUploaderImageMetrics(screenDimensions).getWidth() / 2;
-        int commenterImageBoundsY = commenterImageBoundsX;
-
-        return new Rectangle(commenterImageX, commenterImageY, commenterImageBoundsX, commenterImageBoundsY);
+        return new Rectangle(
+                (int)(screenDimensions.getWidth() / 2 + screenDimensions.getHeight() / 6),
+                (int)screenDimensions.getWidth() / 50 + (int) screenDimensions.getHeight() * 1/3,
+                (int)(screenDimensions.getWidth() / 30),
+                (int)(screenDimensions.getWidth() / 30));
 
     }
 
     Rectangle getCommentMetrics(Dimension2D screenDimensions) {
+        //(int) getCommenterImageMetrics(screenDimensions).getX() + (int) screenDimensions.getWidth() / 20
         return new Rectangle(
-                (int) getCommenterImageMetrics(screenDimensions).getX() + (int) screenDimensions.getWidth() / 20,
-                (int) getCommenterImageMetrics(screenDimensions).getY(),
-                (int) getCaptionMetrics(screenDimensions).getWidth(),
-                (int) getCaptionMetrics(screenDimensions).getHeight()
+                (int)(screenDimensions.getWidth() * 11 / 20 + screenDimensions.getHeight()  / 6),
+                (int)screenDimensions.getWidth() / 50 + (int) screenDimensions.getHeight() * 1/3,
+                (int) screenDimensions.getWidth() / 2,
+                (int) screenDimensions.getHeight() / 10
         );
 
 
@@ -68,12 +64,16 @@ public class LayoutMetrics {
     Rectangle getUploaderNameMetrics(Dimension2D screenDimensions) {
 
         int uploaderNameX = (int) getUploaderImageMetrics(screenDimensions).getX() + (int) screenDimensions.getWidth() / 10;
-        int uploaderNameY = (int) getUploaderImageMetrics(screenDimensions).getY() - (int) screenDimensions.getWidth() / 30;
+        int uploaderNameY = (int) screenDimensions.getWidth() / 50 + (int) screenDimensions.getHeight() / 20 + (int) screenDimensions.getHeight() / 12 - (int) screenDimensions.getWidth() / 30;
 
         int uploaderNameBoundsX = (int) getUploaderImageMetrics(screenDimensions).getWidth() * 2;
         int uploaderNameBoundsY = (int) getUploaderImageMetrics(screenDimensions).getHeight() * 2;
 
-        return new Rectangle(uploaderNameX, uploaderNameY, uploaderNameBoundsX, uploaderNameBoundsY);
+        return new Rectangle(
+                (int) (screenDimensions.getWidth() * 3/5 + screenDimensions.getHeight() / 6),
+                (int) (screenDimensions.getHeight() * 2/15 - screenDimensions.getWidth() / 75) ,
+                (int) screenDimensions.getWidth() * 2 / 15,
+                (int) screenDimensions.getWidth() * 2 / 15);
 
     }
 

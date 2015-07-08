@@ -77,7 +77,7 @@ public class LayoutMetricsTest {
     public void testUploaderImageY() {
         Dimension2D d = new Dimension(1000, 1000);
         LayoutMetrics m = new LayoutMetrics();
-        assertEquals(270, m.getUploaderImageMetrics(d).getY(),5);
+        assertEquals(153, m.getUploaderImageMetrics(d).getY(),5);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class LayoutMetricsTest {
     public void testCommenterImageY(){
         Dimension2D d = new Dimension(1000, 1000);
         LayoutMetrics m = new LayoutMetrics();
-        assertEquals(153, m.getCommenterImageMetrics(d).getY(),5);
+        assertEquals(353, m.getCommenterImageMetrics(d).getY(),5);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class LayoutMetricsTest {
     public void testCommentY(){
         Dimension2D d = new Dimension(1000, 1000);
         LayoutMetrics m = new LayoutMetrics();
-        assertEquals(153, m.getCommentMetrics(d).getY(),5);
+        assertEquals(353, m.getCommentMetrics(d).getY(),5);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class LayoutMetricsTest {
     public void testCommentBoundsY(){
         Dimension2D d = new Dimension(1000, 1000);
         LayoutMetrics m = new LayoutMetrics();
-        assertEquals(500, m.getCommentMetrics(d).getHeight(),5);
+        assertEquals(100, m.getCommentMetrics(d).getHeight(),5);
     }
 
     @Test
@@ -161,14 +161,21 @@ public class LayoutMetricsTest {
     public void testUploaderNameY(){
         Dimension2D d = new Dimension(1000, 1000);
         LayoutMetrics m = new LayoutMetrics();
-        assertEquals(236,m.getUploaderNameMetrics(d).getY(),5);
+        assertEquals(120,m.getUploaderNameMetrics(d).getY(),5);
     }
 
     @Test
     public void testUploaderNameBoundsX(){
         Dimension2D d = new Dimension(1000, 1000);
         LayoutMetrics m = new LayoutMetrics();
-        assertEquals(236,m.getUploaderNameMetrics(d).getY(),5);
+        assertEquals(132,m.getUploaderNameMetrics(d).getWidth(),5);
+    }
+
+    @Test
+    public void testUploaderNameBoundsY(){
+        Dimension2D d = new Dimension(1000, 1000);
+        LayoutMetrics m = new LayoutMetrics();
+        assertEquals(133,m.getUploaderNameMetrics(d).getHeight(),5);
     }
 
 }

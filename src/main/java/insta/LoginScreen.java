@@ -91,7 +91,7 @@ public class LoginScreen {
 	JButton initializeButton(Dimension2D dimension){
 		
 		JButton launchButton = new JButton("Start!");
-		launchButton.setBounds((int) (dimension.getWidth() / 2 - dimension.getWidth() / 10), (int) (dimension.getHeight() / 3 + dimension.getHeight() / 20 + dimension.getHeight() / 30), (int) (dimension.getWidth() / 5), (int) (dimension.getHeight() / 20));
+		launchButton.setBounds((int) (dimension.getWidth() * 2/5), (int) (dimension.getHeight() * 5/12), (int) (dimension.getWidth() / 5), (int) (dimension.getHeight() / 20));
 		launchButton.setBackground(Color.ORANGE);
 
 		return launchButton;
@@ -119,7 +119,7 @@ public class LoginScreen {
 	void showFieldWithErrorMessage(Dimension2D dimension,String message){
 
 		JLabel errorMessageField = new JLabel();
-		errorMessageField.setBounds((int)(dimension.getWidth() / 2 - dimension.getWidth() / 10), (int)(dimension.getHeight() / 3 + instagramTagField.getHeight() + dimension.getHeight() / 15), (int)(dimension.getWidth()), (int)(dimension.getHeight() / 20));
+		errorMessageField.setBounds((int)(dimension.getWidth() * 2/5), (int)(dimension.getHeight() * 9/20), (int)(dimension.getWidth()), (int)(dimension.getHeight() / 20));
 		errorMessageField.setForeground(Color.ORANGE);
 		errorMessageField.setVisible(true);
 		errorMessageField.setText(message);

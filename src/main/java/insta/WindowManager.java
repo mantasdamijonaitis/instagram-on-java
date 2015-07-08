@@ -72,7 +72,7 @@ public class WindowManager {
 
     private void launchTimerTask(JTextField textField, JPanel photoPanel, JFrame mainWindow, LoginScreen loginScreen, Dimension2D screenDimensions) {
         try {
-            RepeatableTask task = new RepeatableTask(mainWindow, photoPanel, textField.getText().toString());
+            ImageUpdate task = new ImageUpdate(mainWindow, photoPanel, textField.getText().toString());
             new Timer().schedule(task, 0, 3000);
         } catch (InstagramException e1) {
             loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
