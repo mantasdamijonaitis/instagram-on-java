@@ -3,6 +3,7 @@ package insta;
 import org.jinstagram.exceptions.InstagramException;
 
 import javax.swing.*;
+import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.util.TimerTask;
 
@@ -37,7 +38,11 @@ public class RepeatableTask extends TimerTask {
                    photoPanel = new PhotoFrame(iterator.next()).getCompletePhotoPanel();
                }
            } catch (IOException e) {
-               e.printStackTrace();
+               mainWindow.getContentPane().removeAll();
+               JLabel errorLabel = new JLabel(e.toString());
+               errorLabel.setVisible(true);
+               mainWindow.add(errorLabel);
+               mainWindow.setVisible(true);
             }
             mainWindow.getContentPane().removeAll();
             mainWindow.getContentPane().add(photoPanel);

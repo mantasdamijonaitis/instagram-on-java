@@ -120,14 +120,10 @@ public class PhotoFrame {
             Proxy conProxy = proxy.getProxy();
             URLConnection connection = url.openConnection(conProxy);
             InputStream inStream = connection.getInputStream();
-            try {
+
                 pictureLabel.setIcon(new ImageIcon(
 
                         ImageIO.read(inStream).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(),(int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
         }
 
         else pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(), (int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));

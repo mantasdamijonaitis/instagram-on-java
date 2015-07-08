@@ -1,5 +1,7 @@
 package insta;
+
 import org.jinstagram.exceptions.InstagramException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,26 +16,25 @@ import java.util.Timer;
  */
 public class WindowManager {
 
-    boolean toContinue = true;
 
     public WindowManager() throws IOException {
 
         Dimension2D screenDimensions = screenDimensionsToObject();
         LoginScreen loginScreen = new LoginScreen(screenDimensions);
         System.out.println(loginScreen.getInitializedLoginPanel().toString());
-        JFrame mainWindow = initializeMainWindow(screenDimensions,loginScreen);
-        launchSlideshowRoutine(screenDimensions,mainWindow,loginScreen);
+        JFrame mainWindow = initializeMainWindow(screenDimensions, loginScreen);
+        launchSlideshowRoutine(screenDimensions, mainWindow, loginScreen);
 
     }
 
-    Dimension2D screenDimensionsToObject(){
+    Dimension2D screenDimensionsToObject() {
         return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
-    JFrame initializeMainWindow(Dimension2D screenDimensions, LoginScreen loginScreen){
+    JFrame initializeMainWindow(Dimension2D screenDimensions, LoginScreen loginScreen) {
 
         JFrame mainWindow = new JFrame();
-        mainWindow.setBounds(0, 0, (int)screenDimensions.getWidth(), (int)screenDimensions.getHeight());
+        mainWindow.setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainWindow.setUndecorated(true);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,7 +47,7 @@ public class WindowManager {
 
     }
 
-    void launchSlideshowRoutine(final Dimension2D screenDimensions,final JFrame mainWindow,final LoginScreen loginScreen){
+    void launchSlideshowRoutine(final Dimension2D screenDimensions, final JFrame mainWindow, final LoginScreen loginScreen) {
 
         final JButton loginScreenButton = loginScreen.getInitializetButton();
 
@@ -70,19 +71,13 @@ public class WindowManager {
     }
 
     private void launchTimerTask(JTextField textField, JPanel photoPanel, JFrame mainWindow, LoginScreen loginScreen, Dimension2D screenDimensions) {
-        Timer timer = new Timer();
-        RepeatableTask task = null;
-
         try {
-            task = new RepeatableTask(mainWindow,photoPanel,textField.getText().toString());
+            RepeatableTask task = new RepeatableTask(mainWindow, photoPanel, textField.getText().toString());
+            new Timer().schedule(task, 0, 3000);
         } catch (InstagramException e1) {
             loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
             mainWindow.setVisible(true);
-            toContinue = false;
         }
-
-        if(toContinue)
-        timer.schedule(task, 0, 3000);
     }
 
 }
