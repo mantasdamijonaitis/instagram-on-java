@@ -91,20 +91,11 @@ public class PhotoFrame extends JPanel {
 
         uploaderImage.setBounds((metrics.getUploaderImageMetrics(screenDimensions)));
 
-        URL userUrl = new URL(uploaderUrl);
-
-        if(System.getProperty("proxy")!=null) {
-            ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
-            Proxy proxy = conProxy.getApplicationProxy();
-
-            URLConnection urlConnection = userUrl.openConnection(proxy);
-            InputStream inStream = urlConnection.getInputStream();
-
-            Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.getUploaderImageMetrics(screenDimensions).getWidth(), (int) metrics.getUploaderImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH);
-            uploaderImage.setIcon(new ImageIcon(image));
-        } else{
-            uploaderImage.setIcon(new ImageIcon(ImageIO.read(userUrl).getScaledInstance((int) metrics.getUploaderImageMetrics(screenDimensions).getWidth(), (int) metrics.getUploaderImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
-        }
+        uploaderImage.setIcon(getImageIcon(
+                uploaderUrl,
+                (int)metrics.getUploaderImageMetrics(screenDimensions).getWidth(),
+                (int)metrics.getUploaderImageMetrics(screenDimensions).getHeight()
+        ));
 
         return uploaderImage;
 
@@ -200,47 +191,13 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    void setComments(Comments comments, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException{
-
-        int commentsCount = comments.getCount();
-        int startPositionY = (int)metrics.getCommenterImageMetrics(screenDimensions).getY();
-
-        if(commentsCount > 0){
-
-            JLabel commenterImage[] = new JLabel[commentsCount];
-            JLabel comment[] = new JLabel[commentsCount];
-
-            for(int i = 0;i<commentsCount;i++){
-
-                commenterImage[i] = new JLabel();
-                comment[i] = new JLabel();
-
-                commenterImage[i].setIcon(getImageIcon(
-                        comments.getComments().get(i).getCommentFrom().getProfilePicture(),
-                        (int)metrics.getCommenterImageMetrics(screenDimensions).getWidth(),
-                        (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight()
-                        ));
-                commenterImage[i].setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(), startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
-
-                comment[i].setText(comments.getComments().get(i).getText());
-                comment[i].setForeground(Color.ORANGE);
-                comment[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
-                comment[i].setBounds((int) metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int) screenDimensions.getHeight() / 30, (int) metrics.getCommentMetrics(screenDimensions).getWidth(), (int) metrics.getCommentMetrics(screenDimensions).getHeight());
-
-                startPositionY+=screenDimensions.getHeight() / 15;
-
-            }
-
-        }
-
-    }
-
     private ImageIcon getImageIcon(String url, int width, int height) throws IOException{
 
         ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
         Proxy proxy = conProxy.getApplicationProxy();
 
         URLConnection urlConnection = new URL(url).openConnection(proxy);
+        urlConnection.setReadTimeout(2000);
         InputStream inStream = urlConnection.getInputStream();
 
         ImageIcon imageIcon = new ImageIcon(ImageIO.read(inStream).getScaledInstance(width, height, Image.SCALE_SMOOTH));
