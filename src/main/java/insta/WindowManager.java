@@ -71,7 +71,7 @@ public class WindowManager {
         try {
             task = new ImageUpdateTask(slideShowView, tagName);
         } catch (IOException e) {
-            slideShowView.dislpayError(e.getMessage());
+            slideShowView.displayError(e.getMessage());
         }
         timer.schedule(task, 0, 3000);
         changeView(slideShowView, "slideShow");

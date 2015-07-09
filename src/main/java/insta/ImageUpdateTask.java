@@ -1,11 +1,8 @@
 package insta;
 
 import org.jinstagram.Instagram;
-import org.jinstagram.exceptions.InstagramException;
 
-import javax.swing.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.TimerTask;
 
 /**
@@ -19,7 +16,7 @@ public class ImageUpdateTask extends TimerTask {
 
     String tagName;
 
-    private final int pageAmount = 10;
+    private final int pageAmount = 2;
 
     public ImageUpdateTask(PhotoFrame photoPanel, String tagName) throws IOException {
         this.photoPanel = photoPanel;
@@ -39,13 +36,13 @@ public class ImageUpdateTask extends TimerTask {
                try {
                    iterator = createIterator();
                } catch (IOException e) {
-                   photoPanel.dislpayError(e.getMessage());
+                   photoPanel.displayError(e.getMessage());
                }
            } else {
                try {
                    photoPanel.updateMedia(iterator.next());
                } catch (IOException e) {
-                   photoPanel.dislpayError(e.getMessage());
+                   photoPanel.displayError(e.getMessage());
                }
            }
 

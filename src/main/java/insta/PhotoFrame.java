@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by mantttttas on 2015-07-01.
@@ -38,8 +40,8 @@ public class PhotoFrame extends JPanel {
         JLabel caption = getCaption(media.getCaption(), metrics, screenDimensions);
         JLabel uploaderName = getUploaderName(media.getUser(), metrics, screenDimensions);
         JLabel uploderProfilePicture = getUploaderProfilePicture(media.getUser().getProfilePictureUrl(), metrics, screenDimensions);
-        JLabel comment[] = getComments(media.getComments(), metrics, screenDimensions);
-        JLabel commenterImage[] = getCommenterImages(media.getComments(), metrics, screenDimensions);
+        List<JLabel> comment = getComments(media.getComments(), metrics, screenDimensions);
+        List<JLabel> commenterImage = getCommenterImages(media.getComments(), metrics, screenDimensions);
 
         JLayeredPane layeredPhotoPanel = createPanel(image,caption,uploaderName,uploderProfilePicture,commenterImage,comment);
         add(layeredPhotoPanel, "layeredPhotoPanel");
@@ -49,12 +51,12 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    JLayeredPane createPanel(JLabel image,JLabel caption,JLabel uploaderName, JLabel uploaderProfilePicture, JLabel commenterImage[], JLabel comment[]) {
+    JLayeredPane createPanel(JLabel image,JLabel caption,JLabel uploaderName, JLabel uploaderProfilePicture, List <JLabel> commenterImage, List<JLabel> comment) {
 
         JLayeredPane layeredPhotoPanel = new JLayeredPane();
         layeredPhotoPanel.setBackground(Color.BLACK);
 
-        layeredPhotoPanel.setLayer(image,1);
+        layeredPhotoPanel.setLayer(image, 1);
         layeredPhotoPanel.add(image);
 
         layeredPhotoPanel.setLayer(caption, 1);
@@ -66,13 +68,13 @@ public class PhotoFrame extends JPanel {
         layeredPhotoPanel.setLayer(uploaderName, 1);
         layeredPhotoPanel.add(uploaderName);
 
-        for(int i=0;i<commenterImage.length;i++){
+        for(int i=0;i<commenterImage.size();i++){
 
-            layeredPhotoPanel.setLayer(commenterImage[i], 1);
-            layeredPhotoPanel.add(commenterImage[i]);
+            layeredPhotoPanel.setLayer(commenterImage.get(i), 1);
+            layeredPhotoPanel.add(commenterImage.get(i));
 
-            layeredPhotoPanel.setLayer(comment[i], 1);
-            layeredPhotoPanel.add(comment[i]);
+            layeredPhotoPanel.setLayer(comment.get(i), 1);
+            layeredPhotoPanel.add(comment.get(i));
 
         }
 
@@ -93,8 +95,8 @@ public class PhotoFrame extends JPanel {
 
         uploaderImage.setIcon(getImageIcon(
                 uploaderUrl,
-                (int)metrics.getUploaderImageMetrics(screenDimensions).getWidth(),
-                (int)metrics.getUploaderImageMetrics(screenDimensions).getHeight()
+                (int) metrics.getUploaderImageMetrics(screenDimensions).getWidth(),
+                (int) metrics.getUploaderImageMetrics(screenDimensions).getHeight()
         ));
 
         return uploaderImage;
@@ -137,27 +139,29 @@ public class PhotoFrame extends JPanel {
         pictureLabel.setBounds(metrics.getImageMetrics(screenDimensions));
 
                 pictureLabel.setIcon(getImageIcon(
-                                imagePath,
-                                (int)metrics.getImageMetrics(screenDimensions).getWidth(),
-                                (int)metrics.getImageMetrics(screenDimensions).getHeight()
-                        ));
+                        imagePath,
+                        (int) metrics.getImageMetrics(screenDimensions).getWidth(),
+                        (int) metrics.getImageMetrics(screenDimensions).getHeight()
+                ));
 
         return pictureLabel;
 
     }
 
-    JLabel[] getComments(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions){
+    List<JLabel> getComments(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions){
 
-        JLabel comment[] = new JLabel[commentsData.getComments().size()];
+        //JLabel comment[] = new JLabel[commentsData.getComments().size()];
+        List<JLabel>comment = new LinkedList<JLabel>();
+
         int startPositionY = (int) metrics.getCommenterImageMetrics(screenDimensions).getY();
 
         for(int i = 0;i<commentsData.getComments().size();i++) {
 
-            comment[i] = new JLabel(commentsData.getComments().get(i).getText());
+            comment.add(new JLabel(commentsData.getComments().get(i).getText()));
 
-            comment[i].setForeground(Color.ORANGE);
-            comment[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
-            comment[i].setBounds((int) metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int) screenDimensions.getHeight() / 30, (int) metrics.getCommentMetrics(screenDimensions).getWidth(), (int) metrics.getCommentMetrics(screenDimensions).getHeight());
+            comment.get(i).setForeground(Color.ORANGE);
+            comment.get(i).setFont(new Font("Tahoma", Font.PLAIN, 15));
+            comment.get(i).setBounds((int) metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int) screenDimensions.getHeight() / 30, (int) metrics.getCommentMetrics(screenDimensions).getWidth(), (int) metrics.getCommentMetrics(screenDimensions).getHeight());
 
             startPositionY += screenDimensions.getHeight() / 15;
 
@@ -167,22 +171,28 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    JLabel[] getCommenterImages(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
+    List<JLabel> getCommenterImages(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
 
-        JLabel commenterImages[] = new JLabel[commentsData.getComments().size()];
+        /*List<URL> list = new LinkedList<URL>();
+
+        for(int i=0;i<commentsData.getComments().size();i++){
+            list.add(new URL(commentsData.getComments().get(i).getCommentFrom().getProfilePicture()));
+        }
+
+        Map<URL,ImageIcon> map = getMap(list);*/
+
+        List <JLabel> commenterImages = new LinkedList<JLabel>();
         int startPositionY = (int)metrics.getCommenterImageMetrics(screenDimensions).getY();
 
         for(int i=0;i<commentsData.getComments().size();i++){
 
-            commenterImages[i] = new JLabel(commentsData.getComments().get(i).getText());
+            commenterImages.add(new JLabel());
+            commenterImages.get(i).setIcon(getImageIcon(commentsData.getComments().get(i).getCommentFrom().getProfilePicture(),100,100));
 
-                commenterImages[i].setIcon(getImageIcon(
-                        commentsData.getComments().get(i).getCommentFrom().getProfilePicture(),
-                        (int)metrics.getCommenterImageMetrics(screenDimensions).getWidth(),
-                        (int)metrics.getCommenterImageMetrics(screenDimensions).getHeight()
-                ));
+            commenterImages.get(i).setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(),
+                    startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(),
+                    (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
 
-            commenterImages[i].setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(), startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
             startPositionY+=screenDimensions.getHeight() / 15;
 
         }
@@ -206,7 +216,21 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    public void dislpayError(String message) {
+    public void displayError(String message) {
+
+    }
+
+    private Map<URL,ImageIcon> getMap(List<URL> list) throws IOException {
+
+        Map<URL,ImageIcon> map = new HashMap<URL,ImageIcon>();
+
+        for(int i=0;i<list.size();i++){
+
+            map.put(list.get(i),getImageIcon(list.get(i).getPath(), 100, 100));
+
+        }
+
+        return map;
 
     }
 
