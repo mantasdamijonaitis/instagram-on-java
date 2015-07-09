@@ -143,24 +143,13 @@ public class PhotoFrame extends JPanel {
 
         JLabel pictureLabel = new JLabel();
 
-        URL url = new URL(imagePath);
         pictureLabel.setBounds(metrics.getImageMetrics(screenDimensions));
 
-        if(System.getProperty("proxy")!=null) {
-
-            ApplicationProxyProvider proxy = new ApplicationProxyProvider();
-            Proxy conProxy = proxy.getApplicationProxy();
-            URLConnection connection = url.openConnection(conProxy);
-            InputStream inStream = connection.getInputStream();
-
-                pictureLabel.setIcon(new ImageIcon(
-
-                        ImageIO.read(inStream).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(),(int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
-        }
-
-        else {
-            pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(), (int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
-        }
+                pictureLabel.setIcon(getImageIcon(
+                                imagePath,
+                                (int)metrics.getImageMetrics(screenDimensions).getWidth(),
+                                (int)metrics.getImageMetrics(screenDimensions).getHeight()
+                        ));
 
         return pictureLabel;
 
@@ -196,19 +185,11 @@ public class PhotoFrame extends JPanel {
 
             commenterImages[i] = new JLabel(commentsData.getComments().get(i).getText());
 
-            URL commenterPictureUrl = new URL(commentsData.getComments().get(i).getCommentFrom().getProfilePicture());
-
-            if(System.getProperty("proxy")!=null) {
-                ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
-                Proxy proxy = conProxy.getApplicationProxy();
-
-                URLConnection urlConnection = commenterPictureUrl.openConnection(proxy);
-                InputStream inStream = urlConnection.getInputStream();
-
-                Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH);
-
-                commenterImages[i].setIcon(new ImageIcon(image));
-            } else commenterImages[i].setIcon(new ImageIcon(ImageIO.read(commenterPictureUrl).getScaledInstance((int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
+                commenterImages[i].setIcon(getImageIcon(
+                        commentsData.getComments().get(i).getCommentFrom().getProfilePicture(),
+                        (int)metrics.getCommenterImageMetrics(screenDimensions).getWidth(),
+                        (int)metrics.getCommenterImageMetrics(screenDimensions).getHeight()
+                ));
 
             commenterImages[i].setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(), startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
             startPositionY+=screenDimensions.getHeight() / 15;
@@ -234,20 +215,11 @@ public class PhotoFrame extends JPanel {
                 commenterImage[i] = new JLabel();
                 comment[i] = new JLabel();
 
-                URL commenterPictureUrl = new URL(comments.getComments().get(i).getCommentFrom().getProfilePicture());
-
-                if(System.getProperty("proxy")!=null) {
-                    ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
-                    Proxy proxy = conProxy.getApplicationProxy();
-
-                    URLConnection urlConnection = commenterPictureUrl.openConnection(proxy);
-                    InputStream inStream = urlConnection.getInputStream();
-
-                    Image image = ImageIO.read(inStream).getScaledInstance((int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH);
-
-                    commenterImage[i].setIcon(new ImageIcon(image));
-                } else commenterImage[i].setIcon(new ImageIcon(ImageIO.read(commenterPictureUrl).getScaledInstance((int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
-
+                commenterImage[i].setIcon(getImageIcon(
+                        comments.getComments().get(i).getCommentFrom().getProfilePicture(),
+                        (int)metrics.getCommenterImageMetrics(screenDimensions).getWidth(),
+                        (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight()
+                        ));
                 commenterImage[i].setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(), startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(), (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
 
                 comment[i].setText(comments.getComments().get(i).getText());
@@ -263,7 +235,22 @@ public class PhotoFrame extends JPanel {
 
     }
 
+    private ImageIcon getImageIcon(String url, int width, int height) throws IOException{
+
+        ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
+        Proxy proxy = conProxy.getApplicationProxy();
+
+        URLConnection urlConnection = new URL(url).openConnection(proxy);
+        InputStream inStream = urlConnection.getInputStream();
+
+        ImageIcon imageIcon = new ImageIcon(ImageIO.read(inStream).getScaledInstance(width, height, Image.SCALE_SMOOTH));
+
+        return imageIcon;
+
+    }
+
     public void dislpayError(String message) {
 
     }
+
 }

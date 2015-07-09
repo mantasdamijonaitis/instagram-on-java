@@ -32,7 +32,7 @@ public class ApplicationProxyProviderTest {
     public void testIfProxyPatternWorksRight() throws IOException {
 
         System.setProperty("proxy", "http://mantasDamijonaitis@proxy.fakewebpage.com:8080");
-        assertEquals(Proxy.NO_PROXY,new ApplicationProxyProvider().getApplicationProxy());
+        assertEquals(IOException.class, new ApplicationProxyProvider().getApplicationProxy());
 
     }
 

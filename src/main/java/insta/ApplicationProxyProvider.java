@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApplicationProxyProvider {
+    Proxy proxy = Proxy.NO_PROXY;
 
     final private Pattern USERINFO = Pattern.compile("^([A-Za-z0-9]+):([A-Za-z0-9]+)$");
 
@@ -18,7 +19,7 @@ public class ApplicationProxyProvider {
 
                 url = new URL(proxyFromSystemProperties);
 
-            Proxy proxy = new Proxy(Proxy.Type.valueOf(url.getProtocol().toUpperCase()), new InetSocketAddress(url.getHost(), url.getPort()));
+            proxy = new Proxy(Proxy.Type.valueOf(url.getProtocol().toUpperCase()), new InetSocketAddress(url.getHost(), url.getPort()));
 
             Matcher userInfoMatcher = USERINFO.matcher(url.getUserInfo());
             if (userInfoMatcher.matches()) {
@@ -38,14 +39,12 @@ public class ApplicationProxyProvider {
                 throw new IOException("There was no : between username and password");
             }
 
-            return proxy;
-        } else{
-            return Proxy.NO_PROXY;
+        } return proxy;
         }
 
-    }
-
 }
+
+
 
 
 
