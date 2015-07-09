@@ -9,14 +9,15 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class LoginScreen {
+public class SearchView {
 
 	JButton launchButton;
 	JTextField instagramTagField;
 	JLayeredPane layeredLoginPane;
 	JPanel loginPanel;
 
-	public LoginScreen(Dimension2D dimension) {
+	public SearchView() {
+		Dimension2D dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		this.loginPanel = initializeFrame(dimension);
 		this.instagramTagField = initializeInputField(dimension);
 		this.launchButton = initializeButton(dimension);

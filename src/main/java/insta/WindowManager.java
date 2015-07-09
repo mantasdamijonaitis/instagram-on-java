@@ -1,5 +1,7 @@
 package insta;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,8 +22,6 @@ public class WindowManager {
         Dimension2D screenDimensions = getScreenDimensions();
         mainWindow = new JFrame();
         mainWindow.setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
-        //mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //mainWindow.setUndecorated(true);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.getContentPane().setLayout(new CardLayout(0, 0));
 
@@ -35,17 +35,16 @@ public class WindowManager {
 
     public void showSearchView()  {
 
-        Dimension2D screenDimensions = getScreenDimensions();
-        final LoginScreen loginScreen = new LoginScreen(screenDimensions);
+        final SearchView loginScreen = new SearchView();
 
         loginScreen.getInitializetButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
 
-                JTextField textField = loginScreen.getInitializetTextField();
+                JTextField tagInputField = loginScreen.getInitializetTextField();
 
-                if (textField.getText().toString().length() > 0) {
-                    String tagName = textField.getText().toString();
+                if (StringUtils.isNotEmpty(tagInputField.getText().toString())) {
+                    String tagName = tagInputField.getText().toString();
                     displaySlideShowView(tagName);
 
                 }
@@ -77,21 +76,5 @@ public class WindowManager {
         timer.schedule(task, 0, 3000);
         changeView(slideShowView, "slideShow");
     }
-
-    /*private void launchTimerTask(JTextField textField, JPanel photoPanel, JFrame mainWindow, LoginScreen loginScreen, Dimension2D screenDimensions) {
-        try {
-            ImageUpdateTask task = new ImageUpdateTask(mainWindow, photoPanel, textField.getText().toString());
-            new Timer().schedule(task, 0, 3000);
-        } catch (InstagramException e1) {
-            loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
-            mainWindow.setVisible(true);
-        } catch (MalformedURLException e2) {
-            loginScreen.showFieldWithErrorMessage(screenDimensions,e2.toString());
-            mainWindow.setVisible(true);
-        } catch (IOException e3) {
-            loginScreen.showFieldWithErrorMessage(screenDimensions,e3.toString());
-            mainWindow.setVisible(true);
-        }
-    }*/
 
 }

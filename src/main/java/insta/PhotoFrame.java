@@ -158,7 +158,9 @@ public class PhotoFrame extends JPanel {
                         ImageIO.read(inStream).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(),(int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
         }
 
-        else pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(), (int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
+        else {
+            pictureLabel.setIcon(new ImageIcon(ImageIO.read(url).getScaledInstance((int)metrics.getImageMetrics(screenDimensions).getWidth(), (int)metrics.getImageMetrics(screenDimensions).getHeight(), Image.SCALE_SMOOTH)));
+        }
 
         return pictureLabel;
 
@@ -229,8 +231,8 @@ public class PhotoFrame extends JPanel {
 
             for(int i = 0;i<commentsCount;i++){
 
-                commenterImage[i] = new JLabel("");
-                comment[i] = new JLabel("");
+                commenterImage[i] = new JLabel();
+                comment[i] = new JLabel();
 
                 URL commenterPictureUrl = new URL(comments.getComments().get(i).getCommentFrom().getProfilePicture());
 
