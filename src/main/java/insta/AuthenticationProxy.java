@@ -34,8 +34,10 @@ public class AuthenticationProxy {
             };
 
             Authenticator.setDefault(authenticator);
-            return proxy;
-        } else return null;
+            return Proxy.NO_PROXY;
+        } else{
+            return null;
+        }
 
     }
 
