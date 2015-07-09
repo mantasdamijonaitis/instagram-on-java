@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Timer;
 
 
@@ -76,6 +77,9 @@ public class WindowManager {
             new Timer().schedule(task, 0, 3000);
         } catch (InstagramException e1) {
             loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
+            mainWindow.setVisible(true);
+        } catch (MalformedURLException e) {
+            loginScreen.showFieldWithErrorMessage(screenDimensions,e.toString());
             mainWindow.setVisible(true);
         }
     }

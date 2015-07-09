@@ -58,8 +58,8 @@ public class PhotoFrame {
         URL userUrl = new URL(uploaderUrl);
 
         if(System.getProperty("proxy")!=null) {
-            AuthenticationProxy conProxy = new AuthenticationProxy();
-            Proxy proxy = conProxy.getProxy();
+            ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
+            Proxy proxy = conProxy.getApplicationProxy();
 
             URLConnection urlConnection = userUrl.openConnection(proxy);
             InputStream inStream = urlConnection.getInputStream();
@@ -113,8 +113,8 @@ public class PhotoFrame {
 
         if(System.getProperty("proxy")!=null) {
 
-            AuthenticationProxy proxy = new AuthenticationProxy();
-            Proxy conProxy = proxy.getProxy();
+            ApplicationProxyProvider proxy = new ApplicationProxyProvider();
+            Proxy conProxy = proxy.getApplicationProxy();
             URLConnection connection = url.openConnection(conProxy);
             InputStream inStream = connection.getInputStream();
 
@@ -177,8 +177,8 @@ public class PhotoFrame {
                 URL commenterPictureUrl = new URL(comments.getComments().get(i).getCommentFrom().getProfilePicture());
 
                 if(System.getProperty("proxy")!=null) {
-                    AuthenticationProxy conProxy = new AuthenticationProxy();
-                    Proxy proxy = conProxy.getProxy();
+                    ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
+                    Proxy proxy = conProxy.getApplicationProxy();
 
                     URLConnection urlConnection = commenterPictureUrl.openConnection(proxy);
                     InputStream inStream = urlConnection.getInputStream();

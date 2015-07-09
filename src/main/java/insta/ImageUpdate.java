@@ -4,8 +4,8 @@ import org.jinstagram.Instagram;
 import org.jinstagram.exceptions.InstagramException;
 
 import javax.swing.*;
-import java.awt.geom.Dimension2D;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.TimerTask;
 
 /**
@@ -20,17 +20,17 @@ public class ImageUpdate extends TimerTask {
 
     String userId;
 
-    public ImageUpdate(JFrame mainWindow, JPanel photoPanel, String userId) throws InstagramException {
+    public ImageUpdate(JFrame mainWindow, JPanel photoPanel, String userId) throws InstagramException, MalformedURLException {
         this.mainWindow = mainWindow;
         this.photoPanel = photoPanel;
         this.userId = userId;
         this.iterator = createIterator();
     }
 
-    private InstagramFeedIterator createIterator() throws InstagramException {
+    private InstagramFeedIterator createIterator() throws InstagramException, MalformedURLException {
         Instagram instagram = new Instagram(System.getProperty("clientId"));
         if(System.getProperty("proxy") != null)
-            instagram.setRequestProxy(new AuthenticationProxy().getProxy());
+            instagram.setRequestProxy(new ApplicationProxyProvider().getApplicationProxy());
         return new InstagramFeedIterator(instagram, userId, 10);
     }
 
