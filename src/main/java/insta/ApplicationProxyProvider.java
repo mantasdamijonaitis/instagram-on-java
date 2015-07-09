@@ -17,8 +17,7 @@ public class ApplicationProxyProvider {
             try {
                 url = new URL(userDefinedProxy);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
-                throw new MalformedURLException();
+                throw e;
             }
 
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
@@ -37,6 +36,8 @@ public class ApplicationProxyProvider {
                     }
                 };
                 Authenticator.setDefault(authenticator);
+            } else {
+                return Proxy.NO_PROXY;
             }
 
             return proxy;
