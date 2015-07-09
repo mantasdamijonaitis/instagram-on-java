@@ -1,27 +1,24 @@
 package insta;
 
+import com.sun.deploy.net.proxy.ProxyType;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.System.getProperty;
-
 public class ApplicationProxyProvider {
 
-    Pattern USERINFO = Pattern.compile("^([A-Za-z0-9]+):([A-Za-z0-9]+)$");
+    final private Pattern USERINFO = Pattern.compile("^([A-Za-z0-9]+):([A-Za-z0-9]+)$");
 
     Proxy getApplicationProxy() throws IOException {
         final URL url;
-        String userDefinedProxy = System.getProperty("proxy");
-        if (userDefinedProxy != null) {
-            try {
-                url = new URL(userDefinedProxy);
-            } catch (MalformedURLException e) {
-                throw e;
-            }
+        String proxyFromSystemProperties = System.getProperty("proxy");
+        if (proxyFromSystemProperties != null) {
 
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
+                url = new URL(proxyFromSystemProperties);
+
+            Proxy proxy = new Proxy(Proxy.Type.valueOf(url.getProtocol().toUpperCase()), new InetSocketAddress(url.getHost(), url.getPort()));
 
             Matcher userInfoMatcher = USERINFO.matcher(url.getUserInfo());
             if (userInfoMatcher.matches()) {

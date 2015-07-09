@@ -1,14 +1,11 @@
 package insta;
 
-import org.jinstagram.exceptions.InstagramException;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Timer;
 
 
@@ -17,51 +14,39 @@ import java.util.Timer;
  */
 public class WindowManager {
 
+    final JFrame mainWindow;
 
     public WindowManager() throws IOException {
-
-        Dimension2D screenDimensions = screenDimensionsToObject();
-        LoginScreen loginScreen = new LoginScreen(screenDimensions);
-        System.out.println(loginScreen.getInitializedLoginPanel().toString());
-        JFrame mainWindow = initializeMainWindow(screenDimensions, loginScreen);
-        launchSlideshowRoutine(screenDimensions, mainWindow, loginScreen);
-
-    }
-
-    Dimension2D screenDimensionsToObject() {
-        return Toolkit.getDefaultToolkit().getScreenSize();
-    }
-
-    JFrame initializeMainWindow(Dimension2D screenDimensions, LoginScreen loginScreen) {
-
-        JFrame mainWindow = new JFrame();
+        Dimension2D screenDimensions = getScreenDimensions();
+        mainWindow = new JFrame();
         mainWindow.setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
-        mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        mainWindow.setUndecorated(true);
+        //mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //mainWindow.setUndecorated(true);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.getContentPane().setLayout(new CardLayout(0, 0));
-        mainWindow.getContentPane().add(loginScreen.getInitializedLoginPanel(), "name_123");
 
         mainWindow.setVisible(true);
 
-        return mainWindow;
-
     }
 
-    void launchSlideshowRoutine(final Dimension2D screenDimensions, final JFrame mainWindow, final LoginScreen loginScreen) {
+    Dimension2D getScreenDimensions() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
+    }
 
-        final JButton loginScreenButton = loginScreen.getInitializetButton();
+    public void showSearchView()  {
 
-        loginScreenButton.addActionListener(new ActionListener() {
+        Dimension2D screenDimensions = getScreenDimensions();
+        final LoginScreen loginScreen = new LoginScreen(screenDimensions);
+
+        loginScreen.getInitializetButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
 
                 JTextField textField = loginScreen.getInitializetTextField();
-                JPanel photoPanel = loginScreen.getInitializedLoginPanel();
 
                 if (textField.getText().toString().length() > 0) {
-
-                    launchTimerTask(textField, photoPanel, mainWindow, loginScreen, screenDimensions);
+                    String tagName = textField.getText().toString();
+                    displaySlideShowView(tagName);
 
                 }
 
@@ -69,11 +54,33 @@ public class WindowManager {
 
         });
 
+        changeView(loginScreen.getInitializedLoginPanel(), "searchView");
+
     }
 
-    private void launchTimerTask(JTextField textField, JPanel photoPanel, JFrame mainWindow, LoginScreen loginScreen, Dimension2D screenDimensions) {
+    private void changeView(JPanel view, String name) {
+        mainWindow.getContentPane().removeAll();
+        mainWindow.getContentPane().add(view, name);
+        mainWindow.revalidate();
+        mainWindow.repaint();
+    }
+
+    public void displaySlideShowView(String tagName) {
+        PhotoFrame slideShowView = new PhotoFrame();
+        Timer timer = new Timer();
+        ImageUpdateTask task = null;
         try {
-            ImageUpdate task = new ImageUpdate(mainWindow, photoPanel, textField.getText().toString());
+            task = new ImageUpdateTask(slideShowView, tagName);
+        } catch (IOException e) {
+            slideShowView.dislpayError(e.getMessage());
+        }
+        timer.schedule(task, 0, 3000);
+        changeView(slideShowView, "slideShow");
+    }
+
+    /*private void launchTimerTask(JTextField textField, JPanel photoPanel, JFrame mainWindow, LoginScreen loginScreen, Dimension2D screenDimensions) {
+        try {
+            ImageUpdateTask task = new ImageUpdateTask(mainWindow, photoPanel, textField.getText().toString());
             new Timer().schedule(task, 0, 3000);
         } catch (InstagramException e1) {
             loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
@@ -85,6 +92,6 @@ public class WindowManager {
             loginScreen.showFieldWithErrorMessage(screenDimensions,e3.toString());
             mainWindow.setVisible(true);
         }
-    }
+    }*/
 
 }

@@ -27,7 +27,6 @@ public class ImageUpdateTask extends TimerTask {
 
     private InstagramFeedIterator createIterator() throws IOException {
         Instagram instagram = new Instagram(System.getProperty("clientId"));
-        if(System.getProperty("proxy") != null)
             instagram.setRequestProxy(new ApplicationProxyProvider().getApplicationProxy());
         return new InstagramFeedIterator(instagram, tagName, 10);
     }
@@ -47,6 +46,7 @@ public class ImageUpdateTask extends TimerTask {
                    photoPanel.dislpayError(e.getMessage());
                }
            }
+            photoPanel.setVisible(true);
 
         }
 

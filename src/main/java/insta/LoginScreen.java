@@ -16,7 +16,7 @@ public class LoginScreen {
 	JLayeredPane layeredLoginPane;
 	JPanel loginPanel;
 
-	public LoginScreen(Dimension2D dimension) throws IOException{
+	public LoginScreen(Dimension2D dimension) {
 		this.loginPanel = initializeFrame(dimension);
 		this.instagramTagField = initializeInputField(dimension);
 		this.launchButton = initializeButton(dimension);
@@ -37,7 +37,7 @@ public class LoginScreen {
 		
 	}
 	
-	JLayeredPane addFieldsToLayeredPane(Dimension2D dimension, JPanel loginPanel, JTextField instagramTagField, JButton launchButton) throws IOException {
+	JLayeredPane addFieldsToLayeredPane(Dimension2D dimension, JPanel loginPanel, JTextField instagramTagField, JButton launchButton)  {
 
 		JLayeredPane layeredLoginPane;
 		layeredLoginPane = new JLayeredPane();
