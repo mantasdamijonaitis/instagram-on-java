@@ -20,14 +20,14 @@ public class ImageUpdate extends TimerTask {
 
     String userId;
 
-    public ImageUpdate(JFrame mainWindow, JPanel photoPanel, String userId) throws InstagramException, MalformedURLException {
+    public ImageUpdate(JFrame mainWindow, JPanel photoPanel, String userId) throws IOException {
         this.mainWindow = mainWindow;
         this.photoPanel = photoPanel;
         this.userId = userId;
         this.iterator = createIterator();
     }
 
-    private InstagramFeedIterator createIterator() throws InstagramException, MalformedURLException {
+    private InstagramFeedIterator createIterator() throws IOException {
         Instagram instagram = new Instagram(System.getProperty("clientId"));
         if(System.getProperty("proxy") != null)
             instagram.setRequestProxy(new ApplicationProxyProvider().getApplicationProxy());

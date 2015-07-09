@@ -2,6 +2,7 @@ package insta;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.net.*;
 
 import static org.junit.Assert.*;
@@ -11,19 +12,15 @@ import static org.junit.Assert.*;
  */
 public class ApplicationProxyProviderTest {
 
-    @Test
-    public void testIfApplicationProxyThrowsException() {
-        System.setProperty("proxy","");
-        try {
-            new ApplicationProxyProvider().getApplicationProxy();
-        } catch (MalformedURLException e) {
-            assertNotNull(e.toString());
-        }
+    @Test (expected = IOException.class)
+    public void testIfApplicationProxyThrowsException() throws IOException {
+        System.setProperty("proxy", "");
+        new ApplicationProxyProvider().getApplicationProxy();
 
     }
 
     @Test
-    public void testIfProxyIsReturned() throws MalformedURLException {
+    public void testIfProxyIsReturned() throws IOException {
 
         System.setProperty("proxy", "http://mantas:damijonaitis@proxy.fakewebpage.com:8080");
         assertEquals(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.fakewebpage.com", 8080)),
@@ -31,8 +28,8 @@ public class ApplicationProxyProviderTest {
 
     }
 
-    @Test
-    public void testIfProxyPatternWorksRight() throws  MalformedURLException {
+    @Test(expected = IOException.class)
+    public void testIfProxyPatternWorksRight() throws IOException {
 
         System.setProperty("proxy", "http://mantasDamijonaitis@proxy.fakewebpage.com:8080");
         assertEquals(Proxy.NO_PROXY,new ApplicationProxyProvider().getApplicationProxy());
@@ -40,7 +37,7 @@ public class ApplicationProxyProviderTest {
     }
 
     @Test
-    public void testIfApplicationProxyProviderChecksForSystemVariablesCorrectly() throws MalformedURLException {
+    public void testIfApplicationProxyProviderChecksForSystemVariablesCorrectly() throws IOException {
 
         System.clearProperty("proxy");
         assertEquals(Proxy.NO_PROXY, new ApplicationProxyProvider().getApplicationProxy());

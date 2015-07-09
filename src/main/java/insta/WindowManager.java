@@ -78,8 +78,11 @@ public class WindowManager {
         } catch (InstagramException e1) {
             loginScreen.showFieldWithErrorMessage(screenDimensions, e1.toString());
             mainWindow.setVisible(true);
-        } catch (MalformedURLException e) {
-            loginScreen.showFieldWithErrorMessage(screenDimensions,e.toString());
+        } catch (MalformedURLException e2) {
+            loginScreen.showFieldWithErrorMessage(screenDimensions,e2.toString());
+            mainWindow.setVisible(true);
+        } catch (IOException e3) {
+            loginScreen.showFieldWithErrorMessage(screenDimensions,e3.toString());
             mainWindow.setVisible(true);
         }
     }

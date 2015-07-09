@@ -1,5 +1,6 @@
 package insta;
 
+import java.io.IOException;
 import java.net.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,7 +11,7 @@ public class ApplicationProxyProvider {
 
     Pattern USERINFO = Pattern.compile("^([A-Za-z0-9]+):([A-Za-z0-9]+)$");
 
-    Proxy getApplicationProxy() throws MalformedURLException {
+    Proxy getApplicationProxy() throws IOException {
         final URL url;
         String userDefinedProxy = System.getProperty("proxy");
         if (userDefinedProxy != null) {
@@ -37,7 +38,7 @@ public class ApplicationProxyProvider {
                 };
                 Authenticator.setDefault(authenticator);
             } else {
-                return Proxy.NO_PROXY;
+                throw new IOException("There was no : between username and password");
             }
 
             return proxy;
