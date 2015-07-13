@@ -1,5 +1,6 @@
 package insta;
 
+import org.jinstagram.entity.comments.CommentData;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
 import org.jinstagram.entity.common.User;
@@ -8,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
@@ -20,7 +22,6 @@ import java.util.List;
  * Created by mantttttas on 2015-07-01.
  */
 public class PhotoFrame extends JPanel {
-
 
     public PhotoFrame() {
         setLayout(new CardLayout(0, 0));
@@ -93,8 +94,8 @@ public class PhotoFrame extends JPanel {
 
         uploaderImage.setIcon(getImageIcon(
                 uploaderUrl,
-                (int) metrics.getUploaderImageMetrics().getWidth(),
-                (int) metrics.getUploaderImageMetrics().getHeight()
+                metrics.getUploaderImageMetrics().width,
+                (int) metrics.getUploaderImageMetrics().height
         ));
 
         return uploaderImage;
@@ -138,8 +139,8 @@ public class PhotoFrame extends JPanel {
 
                 pictureLabel.setIcon(getImageIcon(
                         imagePath,
-                        (int) metrics.getImageMetrics().getWidth(),
-                        (int) metrics.getImageMetrics().getHeight()
+                        metrics.getImageMetrics().width,
+                        metrics.getImageMetrics().height
                 ));
 
         return pictureLabel;
@@ -159,10 +160,10 @@ public class PhotoFrame extends JPanel {
             comment.get(i).setForeground(Color.ORANGE);
             comment.get(i).setFont(new Font("Tahoma", Font.PLAIN, 15));
             comment.get(i).setBounds(
-                    (int) metrics.getCommentMetrics().getX(),
+                    metrics.getCommentMetrics().x,
                     startPositionY - (int) screenDimensions.getHeight() / 30,
-                    (int) metrics.getCommentMetrics().getWidth(),
-                    (int) metrics.getCommentMetrics().getHeight());
+                    metrics.getCommentMetrics().width,
+                    metrics.getCommentMetrics().height);
 
             startPositionY += screenDimensions.getHeight() / 15;
 
@@ -174,26 +175,29 @@ public class PhotoFrame extends JPanel {
 
     private List<JLabel> getCommenterImages(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
 
-        /*List<URL> list = new LinkedList<URL>();
+        Rectangle bounds = metrics.getCommenterImageMetrics();
 
-        for(int i=0;i<commentsData.getComments().size();i++){
-            list.add(new URL(commentsData.getComments().get(i).getCommentFrom().getProfilePicture()));
+        Set<URL> list = new HashSet<URL>();
+
+        for(CommentData comment : commentsData.getComments()){
+            list.add(new URL(comment.getCommentFrom().getProfilePicture()));
         }
 
-        Map<URL,ImageIcon> map = getMap(list);*/
+        Map<URL,Image> images = MediaRepository.getImages(list, bounds.x , bounds.y);
 
         List <JLabel> commenterImages = new LinkedList<JLabel>();
         int startPositionY = (int)metrics.getCommenterImageMetrics().getY();
 
-        for(int i=0;i<commentsData.getComments().size();i++){
+        for(CommentData comment : commentsData.getComments()){
 
-            commenterImages.add(new JLabel());
-            commenterImages.get(i).setIcon(getImageIcon(commentsData.getComments().get(i).getCommentFrom().getProfilePicture(),100,100));
+            JLabel label = new JLabel();
+            label.setIcon(getImageIcon(comment.getCommentFrom().getProfilePicture(), 100, 100));
 
-            commenterImages.get(i).setBounds((int) metrics.getCommenterImageMetrics().getX(),
-                    startPositionY, (int) metrics.getCommenterImageMetrics().getWidth(),
-                    (int) metrics.getCommenterImageMetrics().getHeight());
+            label.setBounds(metrics.getCommenterImageMetrics().x,
+                    startPositionY, metrics.getCommenterImageMetrics().width,
+                    metrics.getCommenterImageMetrics().height);
 
+            commenterImages.add(label);
             startPositionY+=screenDimensions.getHeight() / 15;
 
         }
