@@ -1,27 +1,13 @@
 package insta;
 
-import net.sf.ehcache.CacheManager;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.jinstagram.Instagram;
-import org.jinstagram.entity.comments.CommentData;
-import org.jinstagram.entity.common.Comments;
-import org.jinstagram.entity.tags.TagMediaFeed;
-import org.jinstagram.entity.users.feed.MediaFeed;
-import org.jinstagram.entity.users.feed.MediaFeedData;
-import org.jinstagram.exceptions.InstagramException;
-
 import javax.imageio.ImageIO;
-import javax.print.attribute.standard.Media;
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -65,9 +51,9 @@ public class MediaRepository {
 
     }
 
-    private static Image getImage(URL url, int width, int height) throws IOException {
+    public static Image getImage(URL url, int width, int height) throws IOException {
 
-        final Proxy proxy = new ApplicationProxyProvider().getApplicationProxy();
+        final Proxy proxy = ApplicationProxyProvider.getApplicationProxy();
         URLConnection urlConnection = url.openConnection(proxy);
         urlConnection.setReadTimeout(2000);
         final InputStream inStream = urlConnection.getInputStream();

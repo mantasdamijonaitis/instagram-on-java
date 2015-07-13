@@ -17,7 +17,7 @@ public class ApplicationProxyProvider {
 
             final URL url = new URL(proxyUrl);
 
-            final Proxy proxy = new Proxy(Proxy.Type.valueOf(url.getProtocol().toUpperCase()), new InetSocketAddress(url.getHost(), url.getPort()));
+            final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
 
             final Matcher userInfoMatcher = USERINFO.matcher(url.getUserInfo());
             if (userInfoMatcher.matches()) {

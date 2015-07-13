@@ -15,7 +15,7 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 	private int pageSize;
 
 
-	public InstagramFeedIterator(Instagram instagram, String tagName, int pageSize) throws InstagramException { /// sprest pagal api
+	public InstagramFeedIterator(Instagram instagram, String tagName, int pageSize) throws InstagramException {
 		this.instagram = instagram;
 		this.tagName = tagName;
 		this.pageSize = pageSize;

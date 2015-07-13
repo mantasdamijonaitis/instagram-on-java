@@ -16,7 +16,7 @@ public class ImageUpdateTask extends TimerTask {
 
     final String tagName;
 
-    private final int pageAmount = 2;
+    public static final int PAGE_AMOUNT = 2;
 
     public ImageUpdateTask(PhotoFrame photoPanel, String tagName) throws IOException {
         this.photoPanel = photoPanel;
@@ -26,8 +26,9 @@ public class ImageUpdateTask extends TimerTask {
 
     private InstagramFeedIterator createIterator() throws IOException {
         Instagram instagram = new Instagram(System.getProperty("clientId"));
-            instagram.setRequestProxy(new ApplicationProxyProvider().getApplicationProxy());
-        return new InstagramFeedIterator(instagram, tagName, pageAmount);
+        instagram.setRequestProxy(new ApplicationProxyProvider().getApplicationProxy());
+
+        return new InstagramFeedIterator(instagram, tagName, PAGE_AMOUNT);
     }
 
     @Override

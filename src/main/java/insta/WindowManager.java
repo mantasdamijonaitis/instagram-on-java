@@ -41,12 +41,9 @@ public class WindowManager {
 
             public void actionPerformed(ActionEvent e) {
 
-                JTextField tagInputField = loginScreen.getInitializetTextField();
-
-                if (StringUtils.isNotEmpty(tagInputField.getText().toString())) {
-                    String tagName = tagInputField.getText().toString();
+                String tagName = loginScreen.getInitializetTextField().getText().toString();
+                if (StringUtils.isNotEmpty(tagName)) {
                     displaySlideShowView(tagName);
-
                 }
 
             }
