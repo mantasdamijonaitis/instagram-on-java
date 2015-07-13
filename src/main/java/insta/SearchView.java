@@ -11,14 +11,13 @@ import javax.swing.JTextField;
 
 public class SearchView {
 
-	JButton launchButton;
-	JTextField instagramTagField;
-	JLayeredPane layeredLoginPane;
-	JPanel loginPanel;
+	public final JButton launchButton;
+	public final JTextField instagramTagField;
+	public final JLayeredPane layeredLoginPane;
+	public final JPanel loginPanel;
 
 	public SearchView() {
-		Dimension2D dimension = Toolkit.getDefaultToolkit().getScreenSize();
-		this.loginPanel = initializeFrame(dimension);
+		final Dimension2D dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		this.instagramTagField = initializeInputField(dimension);
 		this.launchButton = initializeButton(dimension);
 		this.loginPanel = initializeFrame(dimension);

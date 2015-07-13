@@ -5,11 +5,15 @@ import java.awt.geom.Dimension2D;
 
 public class LayoutMetrics {
 
-    public LayoutMetrics() {
+    private final Dimension2D screenDimensions;
+
+    public LayoutMetrics(Dimension2D screenDimensions) {
+
+        this.screenDimensions = screenDimensions;
 
     }
 
-    Rectangle getImageMetrics(Dimension2D screenDimensions) {
+    Rectangle getImageMetrics() {
 
         return new Rectangle(
                 (int) screenDimensions.getWidth() / 50,
@@ -19,27 +23,27 @@ public class LayoutMetrics {
 
     }
 
-    Rectangle getCaptionMetrics(Dimension2D screenDimensions) {
+    Rectangle getCaptionMetrics() {
 
         return new Rectangle(
-                (int) getImageMetrics(screenDimensions).getX(),
+                (int) screenDimensions.getWidth() / 50,
                 0,
                 (int) screenDimensions.getWidth() / 2,
                 (int) screenDimensions.getHeight() / 10);
 
     }
 
-    Rectangle getUploaderImageMetrics(Dimension2D screenDimensions) {
+    Rectangle getUploaderImageMetrics() {
 
         return new Rectangle(
                 (int) (screenDimensions.getWidth() / 2 + screenDimensions.getHeight() / 6),
-                (int) getImageMetrics(screenDimensions).getY() + (int) screenDimensions.getHeight() / 12,
+                (int) screenDimensions.getWidth() / 50 + (int) screenDimensions.getHeight() / 20 + (int) screenDimensions.getHeight() / 12,
                 (int) screenDimensions.getWidth() / 15,
                 (int) screenDimensions.getWidth() / 15);
 
     }
 
-    Rectangle getCommenterImageMetrics(Dimension2D screenDimensions) {
+    Rectangle getCommenterImageMetrics() {
 
         return new Rectangle(
                 (int)(screenDimensions.getWidth() / 2 + screenDimensions.getHeight() / 6),
@@ -49,7 +53,7 @@ public class LayoutMetrics {
 
     }
 
-    Rectangle getCommentMetrics(Dimension2D screenDimensions) {
+    Rectangle getCommentMetrics() {
 
         return new Rectangle(
                 (int)(screenDimensions.getWidth() * 11 / 20 + screenDimensions.getHeight()  / 6),
@@ -61,7 +65,7 @@ public class LayoutMetrics {
 
     }
 
-    Rectangle getUploaderNameMetrics(Dimension2D screenDimensions) {
+    Rectangle getUploaderNameMetrics() {
 
         return new Rectangle(
                 (int) (screenDimensions.getWidth() * 3/5 + screenDimensions.getHeight() / 6),

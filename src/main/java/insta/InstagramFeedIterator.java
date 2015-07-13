@@ -11,7 +11,7 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 	private final Instagram instagram;
 	private Iterator<MediaFeedData> mediaIterator;
 	private String maxTagId;
-	private String tagName;
+	private final String tagName;
 	private int pageSize;
 
 
@@ -23,7 +23,7 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 	}
 
 	private void loadNextMediaPage() throws InstagramException {
-		TagMediaFeed tagMediaFeed = loadMedia(tagName, maxTagId, pageSize);
+		final TagMediaFeed tagMediaFeed = loadMedia(tagName, maxTagId, pageSize);
 		mediaIterator = tagMediaFeed.getData().iterator();
 		maxTagId = tagMediaFeed.getPagination().getNextMaxTagId();
 	}

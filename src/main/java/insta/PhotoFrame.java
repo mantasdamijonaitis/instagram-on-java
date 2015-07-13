@@ -23,9 +23,8 @@ public class PhotoFrame extends JPanel {
 
 
     public PhotoFrame() {
-        Dimension2D screenDimensions = getScreenDimension();
-
         setLayout(new CardLayout(0, 0));
+        final Dimension2D screenDimensions = getScreenDimension();
         setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         setBackground(Color.BLACK);
         setVisible(true);
@@ -33,17 +32,16 @@ public class PhotoFrame extends JPanel {
 
     public void updateMedia(MediaFeedData media) throws IOException {
         removeAll();
-        LayoutMetrics metrics = new LayoutMetrics();
-        Dimension2D screenDimensions = getScreenDimension();
+        final Dimension2D screenDimensions = getScreenDimension();
+        final LayoutMetrics metrics = new LayoutMetrics(screenDimensions);
+        final JLabel image = getMainPicture(media.getImages().getStandardResolution().getImageUrl(), metrics);
+        final JLabel caption = getCaption(media.getCaption(), metrics);
+        final JLabel uploaderName = getUploaderName(media.getUser(), metrics);
+        final JLabel uploderProfilePicture = getUploaderProfilePicture(media.getUser().getProfilePictureUrl(), metrics);
+        final List<JLabel> comment = getComments(media.getComments(), metrics, screenDimensions);
+        final List<JLabel> commenterImage = getCommenterImages(media.getComments(), metrics, screenDimensions);
 
-        JLabel image = getMainPicture(media.getImages().getStandardResolution().getImageUrl(), metrics, screenDimensions);
-        JLabel caption = getCaption(media.getCaption(), metrics, screenDimensions);
-        JLabel uploaderName = getUploaderName(media.getUser(), metrics, screenDimensions);
-        JLabel uploderProfilePicture = getUploaderProfilePicture(media.getUser().getProfilePictureUrl(), metrics, screenDimensions);
-        List<JLabel> comment = getComments(media.getComments(), metrics, screenDimensions);
-        List<JLabel> commenterImage = getCommenterImages(media.getComments(), metrics, screenDimensions);
-
-        JLayeredPane layeredPhotoPanel = createPanel(image,caption,uploaderName,uploderProfilePicture,commenterImage,comment);
+        final JLayeredPane layeredPhotoPanel = createPanel(image,caption,uploaderName,uploderProfilePicture,commenterImage,comment);
         add(layeredPhotoPanel, "layeredPhotoPanel");
 
         revalidate();
@@ -51,7 +49,7 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    JLayeredPane createPanel(JLabel image,JLabel caption,JLabel uploaderName, JLabel uploaderProfilePicture, List <JLabel> commenterImage, List<JLabel> comment) {
+    private final JLayeredPane createPanel(JLabel image,JLabel caption,JLabel uploaderName, JLabel uploaderProfilePicture, List <JLabel> commenterImage, List<JLabel> comment) {
 
         JLayeredPane layeredPhotoPanel = new JLayeredPane();
         layeredPhotoPanel.setBackground(Color.BLACK);
@@ -82,28 +80,28 @@ public class PhotoFrame extends JPanel {
 
     }
     
-    Dimension2D getScreenDimension(){
+    private Dimension2D getScreenDimension(){
         return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
 
-    JLabel getUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
+   private JLabel getUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics) throws IOException {
 
         JLabel uploaderImage = new JLabel();
 
-        uploaderImage.setBounds((metrics.getUploaderImageMetrics(screenDimensions)));
+        uploaderImage.setBounds((metrics.getUploaderImageMetrics()));
 
         uploaderImage.setIcon(getImageIcon(
                 uploaderUrl,
-                (int) metrics.getUploaderImageMetrics(screenDimensions).getWidth(),
-                (int) metrics.getUploaderImageMetrics(screenDimensions).getHeight()
+                (int) metrics.getUploaderImageMetrics().getWidth(),
+                (int) metrics.getUploaderImageMetrics().getHeight()
         ));
 
         return uploaderImage;
 
     }
 
-    JLabel getCaption(Caption captionInfo, LayoutMetrics metrics, Dimension2D screenDimensions){
+    private JLabel getCaption(Caption captionInfo, LayoutMetrics metrics){
 
         JLabel caption = new JLabel();
 
@@ -111,13 +109,13 @@ public class PhotoFrame extends JPanel {
         caption.setFont(new Font("Tahoma", Font.PLAIN, 50));
 
         caption.setText(captionInfo.getText());
-        caption.setBounds(metrics.getCaptionMetrics(screenDimensions));
+        caption.setBounds(metrics.getCaptionMetrics());
 
         return caption;
 
     }
 
-    JLabel getUploaderName(User user, LayoutMetrics metrics, Dimension2D screenDimensions){
+    private JLabel getUploaderName(User user, LayoutMetrics metrics){
 
         JLabel uploaderName = new JLabel();
         uploaderName.setHorizontalAlignment(SwingConstants.CENTER);
@@ -126,34 +124,33 @@ public class PhotoFrame extends JPanel {
 
 
         uploaderName.setText(user.getUserName());
-        uploaderName.setBounds(metrics.getUploaderNameMetrics(screenDimensions));
+        uploaderName.setBounds(metrics.getUploaderNameMetrics());
 
         return uploaderName;
     }
 
 
-    JLabel getMainPicture(String imagePath, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
+    private JLabel getMainPicture(String imagePath, LayoutMetrics metrics) throws IOException {
 
         JLabel pictureLabel = new JLabel();
 
-        pictureLabel.setBounds(metrics.getImageMetrics(screenDimensions));
+        pictureLabel.setBounds(metrics.getImageMetrics());
 
                 pictureLabel.setIcon(getImageIcon(
                         imagePath,
-                        (int) metrics.getImageMetrics(screenDimensions).getWidth(),
-                        (int) metrics.getImageMetrics(screenDimensions).getHeight()
+                        (int) metrics.getImageMetrics().getWidth(),
+                        (int) metrics.getImageMetrics().getHeight()
                 ));
 
         return pictureLabel;
 
     }
 
-    List<JLabel> getComments(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions){
+    private List<JLabel> getComments(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions){
 
-        //JLabel comment[] = new JLabel[commentsData.getComments().size()];
         List<JLabel>comment = new LinkedList<JLabel>();
 
-        int startPositionY = (int) metrics.getCommenterImageMetrics(screenDimensions).getY();
+        int startPositionY = (int) metrics.getCommenterImageMetrics().getY();
 
         for(int i = 0;i<commentsData.getComments().size();i++) {
 
@@ -161,7 +158,11 @@ public class PhotoFrame extends JPanel {
 
             comment.get(i).setForeground(Color.ORANGE);
             comment.get(i).setFont(new Font("Tahoma", Font.PLAIN, 15));
-            comment.get(i).setBounds((int) metrics.getCommentMetrics(screenDimensions).getX(), startPositionY - (int) screenDimensions.getHeight() / 30, (int) metrics.getCommentMetrics(screenDimensions).getWidth(), (int) metrics.getCommentMetrics(screenDimensions).getHeight());
+            comment.get(i).setBounds(
+                    (int) metrics.getCommentMetrics().getX(),
+                    startPositionY - (int) screenDimensions.getHeight() / 30,
+                    (int) metrics.getCommentMetrics().getWidth(),
+                    (int) metrics.getCommentMetrics().getHeight());
 
             startPositionY += screenDimensions.getHeight() / 15;
 
@@ -171,7 +172,7 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    List<JLabel> getCommenterImages(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
+    private List<JLabel> getCommenterImages(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
 
         /*List<URL> list = new LinkedList<URL>();
 
@@ -182,16 +183,16 @@ public class PhotoFrame extends JPanel {
         Map<URL,ImageIcon> map = getMap(list);*/
 
         List <JLabel> commenterImages = new LinkedList<JLabel>();
-        int startPositionY = (int)metrics.getCommenterImageMetrics(screenDimensions).getY();
+        int startPositionY = (int)metrics.getCommenterImageMetrics().getY();
 
         for(int i=0;i<commentsData.getComments().size();i++){
 
             commenterImages.add(new JLabel());
             commenterImages.get(i).setIcon(getImageIcon(commentsData.getComments().get(i).getCommentFrom().getProfilePicture(),100,100));
 
-            commenterImages.get(i).setBounds((int) metrics.getCommenterImageMetrics(screenDimensions).getX(),
-                    startPositionY, (int) metrics.getCommenterImageMetrics(screenDimensions).getWidth(),
-                    (int) metrics.getCommenterImageMetrics(screenDimensions).getHeight());
+            commenterImages.get(i).setBounds((int) metrics.getCommenterImageMetrics().getX(),
+                    startPositionY, (int) metrics.getCommenterImageMetrics().getWidth(),
+                    (int) metrics.getCommenterImageMetrics().getHeight());
 
             startPositionY+=screenDimensions.getHeight() / 15;
 
@@ -203,16 +204,12 @@ public class PhotoFrame extends JPanel {
 
     private ImageIcon getImageIcon(String url, int width, int height) throws IOException{
 
-        ApplicationProxyProvider conProxy = new ApplicationProxyProvider();
-        Proxy proxy = conProxy.getApplicationProxy();
-
+        final Proxy proxy = new ApplicationProxyProvider().getApplicationProxy();
         URLConnection urlConnection = new URL(url).openConnection(proxy);
         urlConnection.setReadTimeout(2000);
-        InputStream inStream = urlConnection.getInputStream();
+        final InputStream inStream = urlConnection.getInputStream();
 
-        ImageIcon imageIcon = new ImageIcon(ImageIO.read(inStream).getScaledInstance(width, height, Image.SCALE_SMOOTH));
-
-        return imageIcon;
+        return new ImageIcon(ImageIO.read(inStream).getScaledInstance(width, height, Image.SCALE_SMOOTH));
 
     }
 

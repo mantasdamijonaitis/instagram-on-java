@@ -10,11 +10,11 @@ import java.util.TimerTask;
  */
 public class ImageUpdateTask extends TimerTask {
 
-    PhotoFrame photoPanel;
+    final PhotoFrame photoPanel;
 
     InstagramFeedIterator iterator;
 
-    String tagName;
+    final String tagName;
 
     private final int pageAmount = 2;
 

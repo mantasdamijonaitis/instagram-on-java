@@ -19,7 +19,7 @@ public class WindowManager {
     final JFrame mainWindow;
 
     public WindowManager() throws IOException {
-        Dimension2D screenDimensions = getScreenDimensions();
+        final Dimension2D screenDimensions = getScreenDimensions();
         mainWindow = new JFrame();
         mainWindow.setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
