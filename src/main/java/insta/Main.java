@@ -7,9 +7,9 @@ import java.util.concurrent.ExecutionException;
 public class Main {
 
 	public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-		//final WindowManager manager = new WindowManager();
-		//manager.showSearchView();
-		MediaRepository repository = new MediaRepository();
+		final WindowManager manager = new WindowManager();
+		manager.showSearchView();
+		//MediaRepository repository = new MediaRepository();
 		//repository.loadExample();
 	}
 	

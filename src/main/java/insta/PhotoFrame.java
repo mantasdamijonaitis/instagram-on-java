@@ -52,7 +52,7 @@ public class PhotoFrame extends JPanel {
 
     private final JLayeredPane createPanel(JLabel image,JLabel caption,JLabel uploaderName, JLabel uploaderProfilePicture, List <JLabel> commenterImage, List<JLabel> comment) {
 
-        JLayeredPane layeredPhotoPanel = new JLayeredPane();
+        final JLayeredPane layeredPhotoPanel = new JLayeredPane();
         layeredPhotoPanel.setBackground(Color.BLACK);
 
         layeredPhotoPanel.setLayer(image, 1);
@@ -88,14 +88,14 @@ public class PhotoFrame extends JPanel {
 
    private JLabel getUploaderProfilePicture(String uploaderUrl, LayoutMetrics metrics) throws IOException {
 
-        JLabel uploaderImage = new JLabel();
+        final JLabel uploaderImage = new JLabel();
 
         uploaderImage.setBounds((metrics.getUploaderImageMetrics()));
 
         uploaderImage.setIcon(getImageIcon(
                 uploaderUrl,
                 metrics.getUploaderImageMetrics().width,
-                (int) metrics.getUploaderImageMetrics().height
+                metrics.getUploaderImageMetrics().height
         ));
 
         return uploaderImage;
@@ -104,7 +104,7 @@ public class PhotoFrame extends JPanel {
 
     private JLabel getCaption(Caption captionInfo, LayoutMetrics metrics){
 
-        JLabel caption = new JLabel();
+        final JLabel caption = new JLabel();
 
         caption.setForeground(Color.ORANGE);
         caption.setFont(new Font("Tahoma", Font.PLAIN, 50));
@@ -118,11 +118,10 @@ public class PhotoFrame extends JPanel {
 
     private JLabel getUploaderName(User user, LayoutMetrics metrics){
 
-        JLabel uploaderName = new JLabel();
+        final JLabel uploaderName = new JLabel();
         uploaderName.setHorizontalAlignment(SwingConstants.CENTER);
         uploaderName.setFont(new Font("Tahoma", Font.PLAIN, 30));
         uploaderName.setForeground(Color.ORANGE);
-
 
         uploaderName.setText(user.getUserName());
         uploaderName.setBounds(metrics.getUploaderNameMetrics());
@@ -133,7 +132,7 @@ public class PhotoFrame extends JPanel {
 
     private JLabel getMainPicture(String imagePath, LayoutMetrics metrics) throws IOException {
 
-        JLabel pictureLabel = new JLabel();
+        final JLabel pictureLabel = new JLabel();
 
         pictureLabel.setBounds(metrics.getImageMetrics());
 
@@ -149,53 +148,57 @@ public class PhotoFrame extends JPanel {
 
     private List<JLabel> getComments(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions){
 
-        List<JLabel>comment = new LinkedList<JLabel>();
+        final Rectangle bounds = metrics.getCommentMetrics();
+
+        final List<JLabel>commentList = new LinkedList<JLabel>();
 
         int startPositionY = (int) metrics.getCommenterImageMetrics().getY();
 
-        for(int i = 0;i<commentsData.getComments().size();i++) {
+        for(CommentData comment : commentsData.getComments()) {
 
-            comment.add(new JLabel(commentsData.getComments().get(i).getText()));
-
-            comment.get(i).setForeground(Color.ORANGE);
-            comment.get(i).setFont(new Font("Tahoma", Font.PLAIN, 15));
-            comment.get(i).setBounds(
-                    metrics.getCommentMetrics().x,
+            final JLabel label = new JLabel(comment.getText());
+            label.setForeground(Color.ORANGE);
+            label.setFont(new Font("Tahoma", Font.PLAIN, 15));
+            label.setBounds(
+                    bounds.x,
                     startPositionY - (int) screenDimensions.getHeight() / 30,
-                    metrics.getCommentMetrics().width,
-                    metrics.getCommentMetrics().height);
+                    bounds.width,
+                    bounds.height);
+
+            commentList.add(label);
 
             startPositionY += screenDimensions.getHeight() / 15;
 
         }
 
-        return comment;
+        return commentList;
 
     }
 
     private List<JLabel> getCommenterImages(Comments commentsData, LayoutMetrics metrics, Dimension2D screenDimensions) throws IOException {
 
-        Rectangle bounds = metrics.getCommenterImageMetrics();
+        final Rectangle bounds = metrics.getCommenterImageMetrics();
 
-        Set<URL> list = new HashSet<URL>();
+        final Set<URL> list = new HashSet<URL>();
 
         for(CommentData comment : commentsData.getComments()){
             list.add(new URL(comment.getCommentFrom().getProfilePicture()));
         }
 
-        Map<URL,Image> images = MediaRepository.getImages(list, bounds.x , bounds.y);
+        final Map<URL,Image> images = MediaRepository.getImages(list, bounds.height , bounds.width);
 
-        List <JLabel> commenterImages = new LinkedList<JLabel>();
+        final List <JLabel> commenterImages = new LinkedList<JLabel>();
         int startPositionY = (int)metrics.getCommenterImageMetrics().getY();
 
         for(CommentData comment : commentsData.getComments()){
 
-            JLabel label = new JLabel();
-            label.setIcon(getImageIcon(comment.getCommentFrom().getProfilePicture(), 100, 100));
+            final JLabel label = new JLabel();
+            label.setIcon(new ImageIcon(images.get(new URL(comment.getCommentFrom().getProfilePicture()))));
 
-            label.setBounds(metrics.getCommenterImageMetrics().x,
-                    startPositionY, metrics.getCommenterImageMetrics().width,
-                    metrics.getCommenterImageMetrics().height);
+            label.setBounds(bounds.x,
+                    startPositionY,
+                    bounds.width,
+                    bounds.height);
 
             commenterImages.add(label);
             startPositionY+=screenDimensions.getHeight() / 15;
@@ -209,7 +212,7 @@ public class PhotoFrame extends JPanel {
     private ImageIcon getImageIcon(String url, int width, int height) throws IOException{
 
         final Proxy proxy = new ApplicationProxyProvider().getApplicationProxy();
-        URLConnection urlConnection = new URL(url).openConnection(proxy);
+        final URLConnection urlConnection = new URL(url).openConnection(proxy);
         urlConnection.setReadTimeout(2000);
         final InputStream inStream = urlConnection.getInputStream();
 
@@ -218,20 +221,6 @@ public class PhotoFrame extends JPanel {
     }
 
     public void displayError(String message) {
-
-    }
-
-    private Map<URL,ImageIcon> getMap(List<URL> list) throws IOException {
-
-        Map<URL,ImageIcon> map = new HashMap<URL,ImageIcon>();
-
-        for(int i=0;i<list.size();i++){
-
-            map.put(list.get(i),getImageIcon(list.get(i).getPath(), 100, 100));
-
-        }
-
-        return map;
 
     }
 

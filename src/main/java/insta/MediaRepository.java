@@ -33,14 +33,7 @@ public class MediaRepository {
     private static final ExecutorService executor = Executors.newFixedThreadPool(
             Integer.valueOf(System.getProperty("thread.pool.size", "2")));
 
-    public MediaRepository(int width, int height){
-
-    }
-
     public static Map<URL, Image> getImages(Set<URL> urls, final int width, final int height) throws IOException {
-
-        //Set<URL, ImageIcon> map = new HashMap<URL, ImageIcon>();
-        //Set <Image> imageSet = new Set<Image>();
 
         final Map<URL, Future<Image>> futures = new HashMap<URL, Future<Image>>();
 
