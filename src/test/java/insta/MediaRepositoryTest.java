@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class MediaRepositoryTest {
 
     @Test
-    public void voidcheckIfMediaRepositoryReturnsAllImages() throws IOException {
+    public void voidCheckIfMediaRepositoryReturnsAllImages() throws IOException {
         Instagram instagram = new Instagram(System.getProperty("clientId"));
         InstagramFeedIterator iterator = new InstagramFeedIterator(instagram,"vilniuscc",10);
 
