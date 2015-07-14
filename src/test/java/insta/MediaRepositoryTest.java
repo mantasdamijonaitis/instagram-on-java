@@ -1,13 +1,23 @@
 package insta;
 
-import org.jinstagram.Instagram;
-import org.jinstagram.entity.comments.CommentData;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
+import javax.print.attribute.standard.Media;
+
+import static org.mockito.Mockito.*;
+
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
+
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.Assert.*;
 
@@ -16,27 +26,30 @@ import static org.junit.Assert.*;
  */
 public class MediaRepositoryTest {
 
+    @Mock ExecutorService executor;
+
+    @Before
+    public void setup() throws IOException {
+
+        MockitoAnnotations.initMocks(this);
+
+        //urls = new HashSet<URL>(100);
+
+    }
+
     @Test
     public void voidCheckIfMediaRepositoryReturnsAllImages() throws IOException {
-        Instagram instagram = new Instagram(System.getProperty("clientId"));
-        InstagramFeedIterator iterator = new InstagramFeedIterator(instagram,"vilniuscc",10);
 
-        int counter = 0;
-        while(iterator.hasNext()){
-            counter += iterator.next().getComments().getCount();
-        }
+        URL url1 = new URL("http://i845.photobucket.com/albums/ab11/clk2me/sml-Clk2Me-Logo.jpg");
+        URL url2 = new URL("http://i727.photobucket.com/albums/ww278/online4success78/6url_dot_us_header.png");
 
-        int counter2 = 0;
-        InstagramFeedIterator iterator2 = new InstagramFeedIterator(instagram,"vilniuscc",10);
-        while(iterator2.hasNext()) {
-            final Set<URL> list = new HashSet<URL>();
-            for (CommentData comment : iterator2.next().getComments().getComments()) {
-                list.add(new URL(comment.getCommentFrom().getProfilePicture()));
-            }
-            counter2+=MediaRepository.getImages(list,100,100).size();
-        }
+        Set<URL> urlSet = new HashSet<URL>();
+        urlSet.add(url1);
+        urlSet.add(url2);
 
-        assertTrue("Amount of images differ in simple and async mode", counter == counter2);
+        MediaRepository repository = new MediaRepository(executor);
+
+        assertEquals(2,repository.getImages(urlSet,100,100).size());
 
     }
 

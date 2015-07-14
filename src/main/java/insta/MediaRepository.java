@@ -16,10 +16,13 @@ import java.util.concurrent.*;
 
 public class MediaRepository {
 
-    private static final ExecutorService executor = Executors.newFixedThreadPool(
-            Integer.valueOf(System.getProperty("thread.pool.size", "2")));
+    final ExecutorService executor;
 
-    public static Map<URL, Image> getImages(Set<URL> urls, final int width, final int height) throws IOException {
+    public MediaRepository(ExecutorService executor){
+        this.executor = executor;
+    }
+
+    public  Map<URL, Image> getImages(Set<URL> urls, final int width, final int height) throws IOException {
 
         final Map<URL, Future<Image>> futures = new HashMap<URL, Future<Image>>();
 
@@ -51,7 +54,7 @@ public class MediaRepository {
 
     }
 
-    public static Image getImage(URL url, int width, int height) throws IOException {
+    public Image getImage(URL url, int width, int height) throws IOException {
 
         final Proxy proxy = ApplicationProxyProvider.getApplicationProxy();
         URLConnection urlConnection = url.openConnection(proxy);
