@@ -33,10 +33,8 @@ public class InstagramFeedIteratorTest {
     public void before() throws InstagramException {
         MockitoAnnotations.initMocks(this);
 
-        System.setProperty("clientId", "3dc6dd309cb54342b21d9ae74bd0902f");
-
-        when(instagram.getRecentMediaTags("vilniuscc", null, null, 5)).thenReturn(mediaFeed1);
-        when(instagram.getRecentMediaTags("vilniuscc", null, "NEXT_TAG_ID", 5)).thenReturn(mediaFeed2);
+        when(instagram.getRecentMediaTags("1", null, null, 5)).thenReturn(mediaFeed1);
+        when(instagram.getRecentMediaTags("1", null, "NEXT_TAG_ID", 5)).thenReturn(mediaFeed2);
 
         MediaFeedData data = new MediaFeedData();
         List<MediaFeedData> dataList = Arrays.asList(data, data, data, data, data);
@@ -52,7 +50,7 @@ public class InstagramFeedIteratorTest {
 
     @Test
     public void testRetrieves10() throws InstagramException {
-        InstagramFeedIterator iterator = new InstagramFeedIterator(instagram, "vilniuscc", 5);
+        InstagramFeedIterator iterator = new InstagramFeedIterator(instagram, "1", 5);
         int counter = 0;
         while (iterator.hasNext()) {
             iterator.next();
@@ -60,7 +58,7 @@ public class InstagramFeedIteratorTest {
         }
 
         assertEquals(10, counter);
-        verify(instagram, times(2)).getRecentMediaTags(eq("vilniuscc"), any(String.class), any(String.class), eq(5L));
+        verify(instagram, times(2)).getRecentMediaTags(eq("1"), any(String.class), any(String.class), eq(5L));
 
     }
 

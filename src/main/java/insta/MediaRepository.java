@@ -31,7 +31,7 @@ public class MediaRepository {
 
     public Map<URL, Image> getImages(Set<URL> urls, final int width, final int height) throws IOException {
 
-        final Map<URL, Future<Image>> futures = new HashMap<URL, Future<Image>>();
+        final Map<URL, Future<Image>> futures = new HashMap<URL, Future<Image>>();/// cia map, ne future listas
 
         for (final URL imageUrl : urls) {
 
@@ -42,7 +42,7 @@ public class MediaRepository {
                 }
             });
 
-            futures.put(imageUrl, future);
+            futures.put(imageUrl, future); /// supila taip, kad futures tampa lygus null, tai man reikia paduot fake future list
 
         }
 
