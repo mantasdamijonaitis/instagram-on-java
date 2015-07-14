@@ -1,6 +1,5 @@
 package insta;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -12,7 +11,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
 		AbstractApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
 		final WindowManager manager = context.getBean(WindowManager.class);
-		manager.showSearchView();
+		manager.displaySearchView();
 		context.registerShutdownHook();
 	}
 	

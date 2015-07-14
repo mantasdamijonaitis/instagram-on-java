@@ -42,7 +42,7 @@ public class WindowManager {
         return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
-    public void showSearchView()  {
+    public void displaySearchView()  {
 
         searchView.getInitializetButton().addActionListener(new ActionListener() {
 
@@ -72,7 +72,7 @@ public class WindowManager {
         Timer timer = new Timer();
         ImageUpdateTask task = null;
         try {
-            task = new ImageUpdateTask(photoFrame, tagName);
+            task = new ImageUpdateTask(photoFrame,tagName);
         } catch (IOException e) {
             photoFrame.displayError(e.getMessage());
         }
