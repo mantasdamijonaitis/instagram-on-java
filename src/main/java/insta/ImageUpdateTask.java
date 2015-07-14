@@ -1,6 +1,7 @@
 package insta;
 
 import org.jinstagram.Instagram;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.TimerTask;
@@ -16,7 +17,7 @@ public class ImageUpdateTask extends TimerTask {
 
     final String tagName;
 
-    public static final int PAGE_AMOUNT = 2;
+    public static final int PAGE_SIZE = 2;
 
     public ImageUpdateTask(PhotoFrame photoPanel, String tagName) throws IOException {
         this.photoPanel = photoPanel;
@@ -28,7 +29,7 @@ public class ImageUpdateTask extends TimerTask {
         Instagram instagram = new Instagram(System.getProperty("clientId"));
         instagram.setRequestProxy(new ApplicationProxyProvider().getApplicationProxy());
 
-        return new InstagramFeedIterator(instagram, tagName, PAGE_AMOUNT);
+        return new InstagramFeedIterator(instagram, tagName, PAGE_SIZE);
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.jinstagram.entity.tags.TagMediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 
+
 public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 
 	private final Instagram instagram;

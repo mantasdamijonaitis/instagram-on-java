@@ -5,6 +5,8 @@ import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
 import org.jinstagram.entity.common.User;
 import org.jinstagram.entity.users.feed.MediaFeedData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,14 +25,18 @@ import java.util.concurrent.Executors;
 /**
  * Created by mantttttas on 2015-07-01.
  */
+@Component
 public class PhotoFrame extends JPanel {
 
     final LayoutMetrics metrics;
+    final MediaRepository repository;
 
-    public PhotoFrame() {
+    @Autowired
+    public PhotoFrame(MediaRepository repository,LayoutMetrics metrics) {
+        this.metrics = metrics;
+        this.repository = repository;
         setLayout(new CardLayout(0, 0));
         final Dimension2D screenDimensions = getScreenDimension();
-        this.metrics = new LayoutMetrics(screenDimensions);
         setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         setBackground(Color.BLACK);
         setVisible(true);
@@ -189,10 +195,7 @@ public class PhotoFrame extends JPanel {
             list.add(new URL(comment.getCommentFrom().getProfilePicture()));
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(
-                Integer.valueOf(System.getProperty("thread.pool.size", "2")));
-
-        final Map<URL, Image> images = new MediaRepository(executor).getImages(list, bounds.height, bounds.width);
+        final Map<URL, Image> images = repository.getImages(list, bounds.height, bounds.width);
 
         final List<JLabel> commenterImages = new LinkedList<JLabel>();
         int startPositionY = (int) metrics.getCommenterImageMetrics().getY();

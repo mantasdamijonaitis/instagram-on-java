@@ -14,7 +14,7 @@ public class ApplicationProxyProviderTest {
 
     @Test (expected = IOException.class)
     public void testIfApplicationProxyThrowsException() throws IOException {
-        System.setProperty("proxy", "");
+        System.setProperty("proxy", "56657");
         new ApplicationProxyProvider().getApplicationProxy();
 
     }

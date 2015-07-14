@@ -1,14 +1,19 @@
 package insta;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.IOException;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-		final WindowManager manager = new WindowManager();
+		AbstractApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+		final WindowManager manager = context.getBean(WindowManager.class);
 		manager.showSearchView();
+		context.registerShutdownHook();
 	}
 	
 }

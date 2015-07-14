@@ -1,11 +1,20 @@
 package insta;
 
+import org.springframework.stereotype.Component;
+
 import java.awt.*;
 import java.awt.geom.Dimension2D;
 
+@Component
 public class LayoutMetrics {
 
     private final Dimension2D screenDimensions;
+
+    public LayoutMetrics(){
+
+        this.screenDimensions = Toolkit.getDefaultToolkit().getScreenSize();
+
+    }
 
     public LayoutMetrics(Dimension2D screenDimensions) {
 

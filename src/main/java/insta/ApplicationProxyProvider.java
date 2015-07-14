@@ -1,10 +1,14 @@
 package insta;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class ApplicationProxyProvider {
 
     public static final Pattern USERINFO = Pattern.compile("^([A-Za-z0-9]+):([A-Za-z0-9]+)$");
@@ -12,7 +16,6 @@ public class ApplicationProxyProvider {
     static Proxy getApplicationProxy() throws IOException {
 
         final String proxyUrl = System.getProperty("proxy");
-
         if (proxyUrl != null) {
 
             final URL url = new URL(proxyUrl);

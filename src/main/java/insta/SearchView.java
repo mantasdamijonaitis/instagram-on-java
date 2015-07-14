@@ -1,14 +1,16 @@
 package insta;
 
+import org.springframework.stereotype.Component;
+
 import java.awt.*;
 import java.awt.geom.Dimension2D;
-import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+@Component
 public class SearchView {
 
 	public final JButton launchButton;
