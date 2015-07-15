@@ -43,7 +43,7 @@ public class SearchView {
 
 		final JLayeredPane layeredLoginPane;
 		layeredLoginPane = new JLayeredPane();
-		loginPanel.add(layeredLoginPane, "name_123"); /// add this later!
+		loginPanel.add(layeredLoginPane, "name_123");
 
 		JLabel backgroundLabel = new JLabel("New label");
 		layeredLoginPane.setLayer(backgroundLabel, 0);

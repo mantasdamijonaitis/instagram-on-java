@@ -3,17 +3,13 @@ package insta;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -52,7 +48,7 @@ public class MediaRepositoryTest {
         urlSet.add(new URL("http://www.bbb.com"));
         urlSet.add(new URL("http://www.aaa.com"));
 
-        assertEquals(3, new MediaRepository(executor, provider).getImages(urlSet, new Point(100,100)).size());
+        assertEquals(3, new MediaRepositoryCachable(executor, provider).getImages(urlSet, new Point(100,100)).size());
 
     }
 
@@ -66,7 +62,7 @@ public class MediaRepositoryTest {
         urlSet.add(new URL("http://www.ccc.com"));
         urlSet.add(new URL("http://www.ccc.com"));
 
-        assertEquals(1, new MediaRepository(executor, provider).getImages(urlSet, new Point(100, 100)).size());
+        assertEquals(1, new MediaRepositoryCachable(executor, provider).getImages(urlSet, new Point(100, 100)).size());
 
     }
 
@@ -80,7 +76,7 @@ public class MediaRepositoryTest {
         urlSet.add(new URL("http://www.aaa.com"));
 
         reset(executor);
-        new MediaRepository(executor,provider).getImages(urlSet, new Point(100,100));
+        new MediaRepositoryCachable(executor,provider).getImages(urlSet, new Point(100,100));
 
     }
 

@@ -10,12 +10,9 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Dimension2D;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by mantttttas on 2015-07-01.
@@ -27,7 +24,7 @@ public class PhotoFrame extends JPanel {
     final MediaRepository repository;
 
     @Autowired
-    public PhotoFrame(MediaRepository repository,LayoutMetrics metrics) {
+    public PhotoFrame(MediaRepository repository, LayoutMetrics metrics) {
         this.metrics = metrics;
         this.repository = repository;
         setLayout(new CardLayout(0, 0));
@@ -91,15 +88,15 @@ public class PhotoFrame extends JPanel {
     }
 
 
-    private JLabel getUploaderProfilePicture(String uploaderUrl) throws IOException, ExecutionException {
+    private JLabel getUploaderProfilePicture(String uploaderUrl) throws Exception {
 
         final JLabel uploaderImage = new JLabel();
-        Point p = new Point(metrics.getUploaderImageMetrics().width,
+        Point pictureDimensions = new Point(metrics.getUploaderImageMetrics().width,
                 metrics.getUploaderImageMetrics().height);
 
         uploaderImage.setBounds((metrics.getUploaderImageMetrics()));
 
-        uploaderImage.setIcon(new ImageIcon(MediaRepository.getImage(new Key(new URL(uploaderUrl), p))));
+        uploaderImage.setIcon(new ImageIcon(repository.getImage(new URL(uploaderUrl), pictureDimensions)));
 
         return uploaderImage;
 
@@ -133,13 +130,13 @@ public class PhotoFrame extends JPanel {
     }
 
 
-    private JLabel getMainPicture(String imagePath) throws MalformedURLException, ExecutionException {
+    private JLabel getMainPicture(String imagePath) throws Exception {
 
         final JLabel pictureLabel = new JLabel();
         pictureLabel.setBounds(metrics.getImageMetrics());
-        Point p = new Point(metrics.getImageMetrics().width,metrics.getImageMetrics().height);
+        Point pictureDimensions = new Point(metrics.getImageMetrics().width,metrics.getImageMetrics().height);
 
-        pictureLabel.setIcon(new ImageIcon(MediaRepository.getImage(new Key(new URL(imagePath),p))));
+        pictureLabel.setIcon(new ImageIcon(repository.getImage(new URL(imagePath),pictureDimensions)));
 
         return pictureLabel;
 
