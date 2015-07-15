@@ -12,9 +12,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.Key;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -27,8 +27,6 @@ public class MediaRepository {
 
     final ExecutorService executor;
     final ApplicationProxyProvider applicationProxy;
-    LoadingCache<Key, Image> cache;
-    Map<URL,Point> map = new HashMap<URL,Point>();
 
     @Autowired
     public MediaRepository(@Qualifier(value = "connectionExecutors") ExecutorService executor, ApplicationProxyProvider applicationProxy){
@@ -36,7 +34,7 @@ public class MediaRepository {
         this.applicationProxy = applicationProxy;
     }
 
-    public Map<URL, Image> getImages(Set<URL> urls, final Point p) throws IOException {
+    public Map<URL, Image> getImages(Set<URL> urls, final Point p) throws Exception {
 
         final Map<URL, Future<Image>> futures = new HashMap<URL, Future<Image>>();/// cia map, ne future listas
 
@@ -45,13 +43,15 @@ public class MediaRepository {
             Future<Image> future = executor.submit(new Callable<Image>() {
 
                 public Image call() throws Exception {
-                    return getImage(imageUrl, p);
+                    return getImage(new Key(imageUrl,p));
                 }
             });
 
-            futures.put(imageUrl, future); /// supila taip, kad futures tampa lygus null, tai man reikia paduot fake future list
+            futures.put(imageUrl, future);
 
         }
+
+
 
         return new HashMap<URL, Image>(){{
 
@@ -59,7 +59,7 @@ public class MediaRepository {
                 try {
                     put(url, futures.get(url).get());
                 } catch (Exception e) {
-                    put(url, getImage(url, p));
+                    put(url, getImage(new Key(url, p)));
                 }
             }
 
@@ -67,70 +67,25 @@ public class MediaRepository {
 
         }};
 
-
     }
 
-    public void getImage(final URL url, final Point p){
+    private static LoadingCache<Key,Image>commenterImageCache = CacheBuilder.newBuilder().
+            weakKeys().weakValues().expireAfterAccess(1,TimeUnit.DAYS).build(
 
-        CacheLoader<Key, Image> loader = new CacheLoader<Key, Image>() {
-            public Image load(Key key) throws Exception {
-                
-                return getImage(key.getUrl(), key.getDimesions());
-            }
-        };
-
-        cache = CacheBuilder.newBuilder().build(loader);
-
-    }
-
-    public Image getImage(URL url, Point p) throws IOException {
-
-        URLConnection urlConnection = url.openConnection(applicationProxy.getApplicationProxy());
-        urlConnection.setReadTimeout(2000);
-        final InputStream inStream = urlConnection.getInputStream();
-        map.put(url,p);
-        return ImageIO.read(inStream).getScaledInstance(p.x, p.y, Image.SCALE_SMOOTH);
-
-    }
-
-    public static class Key {
-
-        private final URL url;
-        private final Point dimesions;
-
-
-        public Key(URL url, Point dimesions) {
-            this.url = url;
-            this.dimesions = dimesions;
-        }
-
-        public URL getUrl() {
-            return url;
-        }
-
-        public Point getDimesions() {
-            return dimesions;
-        }
-
-        @Override
-        public int hashCode() {
-            return url.hashCode() + 17 * dimesions.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Key) {
-                Key key = (Key) o;
-                if (!key.dimesions.equals(dimesions)) {
-                    return false;
+            new CacheLoader<Key, Image>(){
+                public Image load(Key key) throws Exception {
+                    final Proxy proxy = new ApplicationProxyProvider().getApplicationProxy();
+                    final URLConnection urlConnection = key.getUrl().openConnection(proxy);
+                    urlConnection.setReadTimeout(2000);
+                    final InputStream inStream = urlConnection.getInputStream();
+                    return ImageIO.read(inStream).getScaledInstance(key.getDimesions().x, key.getDimesions().y, Image.SCALE_SMOOTH);
                 }
-                if (!key.url.equals(url)) {
-                    return false;
-                }
-                return true;
-            }
-            return false;
-        }
+            });
+
+
+    public static Image getImage(Key key) throws ExecutionException {
+        return commenterImageCache.get(key);
     }
+
 }
 

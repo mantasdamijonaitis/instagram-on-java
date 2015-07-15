@@ -44,11 +44,11 @@ public class ImageUpdateTask extends TimerTask {
            } else {
                try {
                    photoPanel.updateMedia(iterator.next());
-               } catch (IOException e) {
+               } catch (Exception e) {
                    photoPanel.displayError(e.getMessage());
                }
            }
 
-        }
+    }
 
 }

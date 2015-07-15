@@ -42,7 +42,7 @@ public class MediaRepositoryTest {
     }
 
     @Test
-    public void checkIfMediaRepositoryReturnsAllImages() throws IOException {
+    public void checkIfMediaRepositoryReturnsAllImages() throws Exception {
 
         System.clearProperty("proxy");
 
@@ -52,12 +52,12 @@ public class MediaRepositoryTest {
         urlSet.add(new URL("http://www.bbb.com"));
         urlSet.add(new URL("http://www.aaa.com"));
 
-        assertEquals(3, new MediaRepository(executor, provider).getImages(urlSet, 100, 100).size());
+        assertEquals(3, new MediaRepository(executor, provider).getImages(urlSet, new Point(100,100)).size());
 
     }
 
     @Test
-    public void checkIfImagesDoNotDuplicate() throws IOException {
+    public void checkIfImagesDoNotDuplicate() throws Exception {
 
         System.clearProperty("proxy");
 
@@ -66,12 +66,12 @@ public class MediaRepositoryTest {
         urlSet.add(new URL("http://www.ccc.com"));
         urlSet.add(new URL("http://www.ccc.com"));
 
-        assertEquals(1, new MediaRepository(executor,provider).getImages(urlSet,100,100).size());
+        assertEquals(1, new MediaRepository(executor, provider).getImages(urlSet, new Point(100, 100)).size());
 
     }
 
     @Test(expected = Exception.class)
-    public void checkIfMediaRepositoryHandlesWrongUrls() throws IOException {
+    public void checkIfMediaRepositoryHandlesWrongUrls() throws Exception {
 
         Set<URL> urlSet = new HashSet<URL>();
 
@@ -80,7 +80,7 @@ public class MediaRepositoryTest {
         urlSet.add(new URL("http://www.aaa.com"));
 
         reset(executor);
-        new MediaRepository(executor,provider).getImages(urlSet,100,100);
+        new MediaRepository(executor,provider).getImages(urlSet, new Point(100,100));
 
     }
 

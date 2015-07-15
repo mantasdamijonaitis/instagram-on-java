@@ -1,5 +1,10 @@
 package insta;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.ExecutionError;
+import org.apache.commons.lang3.StringUtils;
 import org.jinstagram.entity.comments.CommentData;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
@@ -7,20 +12,15 @@ import org.jinstagram.entity.common.User;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mantttttas on 2015-07-01.
@@ -42,7 +42,7 @@ public class PhotoFrame extends JPanel {
         setVisible(true);
     }
 
-    public void updateMedia(MediaFeedData media) throws IOException {
+    public void updateMedia(MediaFeedData media) throws Exception {
         removeAll();
         final Dimension2D screenDimensions = getScreenDimension();
         final JLabel image = getMainPicture(media.getImages().getStandardResolution().getImageUrl());
@@ -96,17 +96,15 @@ public class PhotoFrame extends JPanel {
     }
 
 
-    private JLabel getUploaderProfilePicture(String uploaderUrl) throws IOException {
+    private JLabel getUploaderProfilePicture(String uploaderUrl) throws IOException, ExecutionException {
 
         final JLabel uploaderImage = new JLabel();
+        Point p = new Point(metrics.getUploaderImageMetrics().width,
+                metrics.getUploaderImageMetrics().height);
 
         uploaderImage.setBounds((metrics.getUploaderImageMetrics()));
 
-        uploaderImage.setIcon(getImageIcon(
-                uploaderUrl,
-                metrics.getUploaderImageMetrics().width,
-                metrics.getUploaderImageMetrics().height
-        ));
+        uploaderImage.setIcon(new ImageIcon(MediaRepository.getImage(new Key(new URL(uploaderUrl), p))));
 
         return uploaderImage;
 
@@ -140,17 +138,13 @@ public class PhotoFrame extends JPanel {
     }
 
 
-    private JLabel getMainPicture(String imagePath) throws IOException {
+    private JLabel getMainPicture(String imagePath) throws IOException, ExecutionException {
 
         final JLabel pictureLabel = new JLabel();
-
         pictureLabel.setBounds(metrics.getImageMetrics());
+        Point p = new Point(metrics.getImageMetrics().width,metrics.getImageMetrics().height);
 
-        pictureLabel.setIcon(getImageIcon(
-                imagePath,
-                metrics.getImageMetrics().width,
-                metrics.getImageMetrics().height
-        ));
+        pictureLabel.setIcon(new ImageIcon(MediaRepository.getImage(new Key(new URL(imagePath),p))));
 
         return pictureLabel;
 
@@ -185,7 +179,7 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    private List<JLabel> getCommenterImages(Comments commentsData, Dimension2D screenDimensions) throws IOException {
+    private List<JLabel> getCommenterImages(Comments commentsData, Dimension2D screenDimensions) throws Exception {
 
         final Rectangle bounds = metrics.getCommenterImageMetrics();
 
@@ -195,7 +189,7 @@ public class PhotoFrame extends JPanel {
             list.add(new URL(comment.getCommentFrom().getProfilePicture()));
         }
 
-        final Map<URL, Image> images = repository.getImages(list, bounds.height, bounds.width);
+        final Map<URL, Image> images = repository.getImages(list, new Point(bounds.width, bounds.height));
 
         final List<JLabel> commenterImages = new LinkedList<JLabel>();
         int startPositionY = (int) metrics.getCommenterImageMetrics().getY();
@@ -219,19 +213,7 @@ public class PhotoFrame extends JPanel {
 
     }
 
-    private ImageIcon getImageIcon(String url, int width, int height) throws IOException {
-
-        final Proxy proxy = new ApplicationProxyProvider().getApplicationProxy();
-        final URLConnection urlConnection = new URL(url).openConnection(proxy);
-        urlConnection.setReadTimeout(2000);
-        final InputStream inStream = urlConnection.getInputStream();
-
-        return new ImageIcon(ImageIO.read(inStream).getScaledInstance(width, height, Image.SCALE_SMOOTH));
-
-    }
-
     public void displayError(String message) {
 
     }
-
 }
