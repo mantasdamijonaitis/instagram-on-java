@@ -3,14 +3,12 @@ package insta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
 import java.net.URL;
