@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -132,7 +133,7 @@ public class PhotoFrame extends JPanel {
     }
 
 
-    private JLabel getMainPicture(String imagePath) throws IOException, ExecutionException {
+    private JLabel getMainPicture(String imagePath) throws MalformedURLException, ExecutionException {
 
         final JLabel pictureLabel = new JLabel();
         pictureLabel.setBounds(metrics.getImageMetrics());
