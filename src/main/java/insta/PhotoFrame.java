@@ -1,10 +1,5 @@
 package insta;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.ExecutionError;
-import org.apache.commons.lang3.StringUtils;
 import org.jinstagram.entity.comments.CommentData;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
@@ -20,7 +15,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mantttttas on 2015-07-01.

@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 @Repository
 public class MediaRepository {
 
-    final ExecutorService executor;
+    final  ExecutorService executor;
     final ApplicationProxyProvider applicationProxy;
 
     @Autowired
