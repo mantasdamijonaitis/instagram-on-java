@@ -69,16 +69,16 @@ public class MediaRepositoryCachable implements MediaRepository {
     }
 
     public Image getImage(URL url, Point imageDimensions) throws Exception {
-        Key key = new Key(url,imageDimensions);
+        CacheParameter key = new CacheParameter(url,imageDimensions);
         return commenterImageCache.get(key);
     }
 
-    private class Key {
+    private class CacheParameter {
 
         private final URL url;
         private final Point dimensions;
 
-        public Key(URL url, Point dimesions) {
+        public CacheParameter(URL url, Point dimesions) {
             this.url = url;
             this.dimensions = dimesions;
         }
@@ -98,8 +98,8 @@ public class MediaRepositoryCachable implements MediaRepository {
 
         @Override
         public boolean equals(Object o) {
-            if (o instanceof Key) {
-                Key key = (Key) o;
+            if (o instanceof CacheParameter) {
+                CacheParameter key = (CacheParameter) o;
                 if (!key.dimensions.equals(dimensions)) {
                     return false;
                 }
@@ -112,11 +112,11 @@ public class MediaRepositoryCachable implements MediaRepository {
         }
     }
 
-    private LoadingCache<Key,Image>commenterImageCache = CacheBuilder.newBuilder().
+    private LoadingCache<CacheParameter,Image>commenterImageCache = CacheBuilder.newBuilder().
             expireAfterAccess(1,TimeUnit.DAYS).build(
 
-            new CacheLoader<Key, Image>(){
-                public Image load(Key key) throws Exception {
+            new CacheLoader<CacheParameter, Image>(){
+                public Image load(CacheParameter key) throws Exception {
                     final URLConnection urlConnection = key.getUrl().openConnection(proxy);
                     urlConnection.setReadTimeout(2000);
                     final InputStream inStream = urlConnection.getInputStream();
