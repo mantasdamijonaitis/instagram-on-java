@@ -22,6 +22,8 @@ public class LayoutMetrics {
 
     }
 
+    Rectangle getBackButtonMetrics()
+
     Rectangle getImageMetrics() {
 
         return new Rectangle(

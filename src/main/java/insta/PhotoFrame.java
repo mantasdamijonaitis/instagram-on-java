@@ -22,13 +22,14 @@ public class PhotoFrame extends JPanel {
 
     final LayoutMetrics metrics;
     final MediaRepository repository;
+    final Dimension2D screenDimensions;
 
     @Autowired
     public PhotoFrame(MediaRepository repository, LayoutMetrics metrics) {
         this.metrics = metrics;
         this.repository = repository;
         setLayout(new CardLayout(0, 0));
-        final Dimension2D screenDimensions = getScreenDimension();
+        this.screenDimensions = getScreenDimension();
         setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         setBackground(Color.BLACK);
         setVisible(true);
@@ -36,29 +37,38 @@ public class PhotoFrame extends JPanel {
 
     public void updateMedia(MediaFeedData media) throws Exception {
         removeAll();
-        final Dimension2D screenDimensions = getScreenDimension();
-        final JLabel image = getMainPicture(media.getImages().getStandardResolution().getImageUrl());
+
         final JLabel caption = getCaption(media.getCaption());
         final JLabel uploaderName = getUploaderName(media.getUser());
         final JLabel uploaderProfilePicture = getUploaderProfilePicture(media.getUser().getProfilePictureUrl());
         final List<JLabel> comment = getComments(media.getComments(), screenDimensions);
         final List<JLabel> commenterImage = getCommenterImages(media.getComments(), screenDimensions);
+        final JLayeredPane layeredPhotoPanel = createPanel(caption, uploaderName, uploaderProfilePicture, commenterImage, comment);
 
-        final JLayeredPane layeredPhotoPanel = createPanel(image, caption, uploaderName, uploaderProfilePicture, commenterImage, comment);
         add(layeredPhotoPanel, "layeredPhotoPanel");
+
+        if(media.getVideos() != null) {
+            String fixedUrl = media.getVideos().getStandardResolution().getUrl().replace("https","http");
+            JPanel videoPanel = getVideo(fixedUrl);
+            layeredPhotoPanel.setLayer(videoPanel, 1);
+            layeredPhotoPanel.add(videoPanel);
+            Thread.sleep(7000);
+        } else {
+            JLabel mainImage = getMainPicture(media.getImages().getStandardResolution().getImageUrl());
+            layeredPhotoPanel.setLayer(mainImage, 1);
+            layeredPhotoPanel.add(mainImage);
+        }
+
 
         revalidate();
         repaint();
 
     }
 
-    private final JLayeredPane createPanel(JLabel image, JLabel caption, JLabel uploaderName, JLabel uploaderProfilePicture, List<JLabel> commenterImage, List<JLabel> comment) {
+    private final JLayeredPane createPanel(JLabel caption, JLabel uploaderName, JLabel uploaderProfilePicture, List<JLabel> commenterImage, List<JLabel> comment) {
 
         final JLayeredPane layeredPhotoPanel = new JLayeredPane();
         layeredPhotoPanel.setBackground(Color.BLACK);
-
-        layeredPhotoPanel.setLayer(image, 1);
-        layeredPhotoPanel.add(image);
 
         layeredPhotoPanel.setLayer(caption, 1);
         layeredPhotoPanel.add(caption);
@@ -87,6 +97,13 @@ public class PhotoFrame extends JPanel {
         return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
+    private JPanel getVideo(String videoPath) {
+
+        VideoPlayer video = new VideoPlayer(videoPath,metrics.getImageMetrics());
+
+        return video.getVideoPanel();
+
+    }
 
     private JLabel getUploaderProfilePicture(String uploaderUrl) throws Exception {
 

@@ -2,6 +2,8 @@ package insta;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
