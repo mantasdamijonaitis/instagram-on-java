@@ -19,7 +19,6 @@ public class ImageUpdateTask extends TimerTask {
 
     public static final int PAGE_SIZE = 2;
 
-    @Autowired
     public ImageUpdateTask(PhotoFrame photoPanel, String tagName) throws IOException {
         this.photoPanel = photoPanel;
         this.tagName = tagName;

@@ -1,5 +1,6 @@
 package insta;
 
+import org.apache.log4j.Logger;
 import org.jinstagram.entity.comments.CommentData;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.Comments;
@@ -20,9 +21,13 @@ import java.util.List;
 @Component
 public class PhotoFrame extends JPanel {
 
+    private static Logger LOG = Logger.getLogger(PhotoFrame.class.getName());
+
     final LayoutMetrics metrics;
     final MediaRepository repository;
     final Dimension2D screenDimensions;
+
+    long displayStart = System.currentTimeMillis();
 
     @Autowired
     public PhotoFrame(MediaRepository repository, LayoutMetrics metrics) {
@@ -32,10 +37,17 @@ public class PhotoFrame extends JPanel {
         this.screenDimensions = getScreenDimension();
         setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         setBackground(Color.BLACK);
+
+        JSlider slider = new JSlider();
+        slider.setBounds((int)screenDimensions.getWidth() * 9/10, 100, (int)screenDimensions.getWidth() / 30, (int)screenDimensions.getHeight() / 8);
+        add(slider);
+
         setVisible(true);
     }
 
     public void updateMedia(MediaFeedData media) throws Exception {
+        LOG.info("Last display took:" + ((System.currentTimeMillis() - displayStart) / 1000.0));
+        displayStart = System.currentTimeMillis();
         removeAll();
 
         final JLabel caption = getCaption(media.getCaption());
@@ -48,26 +60,34 @@ public class PhotoFrame extends JPanel {
         add(layeredPhotoPanel, "layeredPhotoPanel");
 
         if(media.getVideos() != null) {
-            String fixedUrl = media.getVideos().getStandardResolution().getUrl().replace("https","http");
-            JPanel videoPanel = getVideo(fixedUrl);
+            String video = media.getVideos().getStandardResolution().getUrl().replace("https","http");
+            LOG.info("display video " + video);
+            final VideoPanel videoPanel = new VideoPanel(video, metrics.getImageMetrics());
             layeredPhotoPanel.setLayer(videoPanel, 1);
             layeredPhotoPanel.add(videoPanel);
-            Thread.sleep(7000);
+
+            revalidate();
+            repaint();
+
+            videoPanel.waitForFinish();
+
         } else {
-            JLabel mainImage = getMainPicture(media.getImages().getStandardResolution().getImageUrl());
+            String image = media.getImages().getStandardResolution().getImageUrl();
+            JLabel mainImage = getMainPicture(image);
+            LOG.info("display image " + image);
             layeredPhotoPanel.setLayer(mainImage, 1);
             layeredPhotoPanel.add(mainImage);
+
+            revalidate();
+            repaint();
         }
-
-
-        revalidate();
-        repaint();
 
     }
 
     private final JLayeredPane createPanel(JLabel caption, JLabel uploaderName, JLabel uploaderProfilePicture, List<JLabel> commenterImage, List<JLabel> comment) {
 
         final JLayeredPane layeredPhotoPanel = new JLayeredPane();
+        layeredPhotoPanel.setBounds(0,0,(int)screenDimensions.getWidth() * 9/10, (int)screenDimensions.getHeight());
         layeredPhotoPanel.setBackground(Color.BLACK);
 
         layeredPhotoPanel.setLayer(caption, 1);
@@ -95,14 +115,6 @@ public class PhotoFrame extends JPanel {
 
     private Dimension2D getScreenDimension() {
         return Toolkit.getDefaultToolkit().getScreenSize();
-    }
-
-    private JPanel getVideo(String videoPath) {
-
-        VideoPlayer video = new VideoPlayer(videoPath,metrics.getImageMetrics());
-
-        return video.getVideoPanel();
-
     }
 
     private JLabel getUploaderProfilePicture(String uploaderUrl) throws Exception {

@@ -3,6 +3,7 @@ package insta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,10 @@ import java.util.concurrent.*;
 @Repository
 public class MediaRepositoryCachable implements MediaRepository {
 
-    final  ExecutorService executor;
+
+    private static Logger LOG = Logger.getLogger(MediaRepositoryCachable.class.getName());
+
+    final ExecutorService executor;
     final ApplicationProxyProvider applicationProxy;
     final Proxy proxy;
 
@@ -112,11 +116,15 @@ public class MediaRepositoryCachable implements MediaRepository {
         }
     }
 
-    private LoadingCache<CacheParameter,Image>commenterImageCache = CacheBuilder.newBuilder().
-            expireAfterAccess(1,TimeUnit.DAYS).build(
+    private LoadingCache<CacheParameter,Image>commenterImageCache = CacheBuilder.newBuilder()
+            .initialCapacity(50)
+            .maximumSize(50)
+            .expireAfterAccess(1,TimeUnit.DAYS)
+            .build(
 
             new CacheLoader<CacheParameter, Image>(){
                 public Image load(CacheParameter key) throws Exception {
+                    LOG.info("Retrieving media " + key.getUrl());
                     final URLConnection urlConnection = key.getUrl().openConnection(proxy);
                     urlConnection.setReadTimeout(2000);
                     final InputStream inStream = urlConnection.getInputStream();

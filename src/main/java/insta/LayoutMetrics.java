@@ -22,7 +22,14 @@ public class LayoutMetrics {
 
     }
 
-    Rectangle getBackButtonMetrics()
+    Rectangle getBackButtonMetrics(){
+
+        return new Rectangle(
+            (int)(screenDimensions.getWidth() - screenDimensions.getWidth() / 12),
+            (int)screenDimensions.getHeight() / 12,
+            (int) screenDimensions.getWidth() / 15,
+            (int) screenDimensions.getWidth() / 15);
+    }
 
     Rectangle getImageMetrics() {
 

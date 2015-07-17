@@ -1,6 +1,7 @@
 package insta;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -8,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
 import java.util.Timer;
@@ -19,6 +22,8 @@ import java.util.Timer;
 
 @Component
 public class WindowManager {
+
+    private static Logger LOG = Logger.getLogger(WindowManager.class.getName());
 
     final JFrame mainWindow;
     final PhotoFrame photoFrame;
@@ -33,7 +38,6 @@ public class WindowManager {
         mainWindow.setBounds(0, 0, (int) screenDimensions.getWidth(), (int) screenDimensions.getHeight());
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.getContentPane().setLayout(new CardLayout(0, 0));
-
         mainWindow.setVisible(true);
 
     }
@@ -62,22 +66,49 @@ public class WindowManager {
     }
 
     private void changeView(JPanel view, String name) {
+        LOG.info("Changing view to " + name);
         mainWindow.getContentPane().removeAll();
         mainWindow.getContentPane().add(view, name);
         mainWindow.revalidate();
         mainWindow.repaint();
     }
 
-    public void displaySlideShowView(String tagName) {
-        Timer timer = new Timer();
-        ImageUpdateTask task = null;
+    public void displaySlideShowView(final String tagName) {
+        final Timer timer = new Timer();
         try {
-            task = new ImageUpdateTask(photoFrame,tagName);
+            final ImageUpdateTask task = new ImageUpdateTask(photoFrame,tagName);
+            LOG.info("Task created #" + tagName);
+            timer.schedule(task, 0, 3000);
+            changeView(photoFrame, "slideShow");
+
+            mainWindow.addKeyListener(new KeyListener() {
+                public void keyTyped(KeyEvent e) {
+
+                }
+
+                public void keyPressed(KeyEvent e) {
+
+                    if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                        boolean taskCancelStatus = task.cancel();
+                        LOG.info("Task canceled #" + tagName + " status " + taskCancelStatus);
+                        timer.cancel();
+                        displaySearchView();
+                    }
+
+                }
+
+                public void keyReleased(KeyEvent e) {
+
+                }
+            });
+
+            mainWindow.setFocusable(true);
+            mainWindow.requestFocusInWindow();
+
         } catch (IOException e) {
             photoFrame.displayError(e.getMessage());
         }
-        timer.schedule(task, 0, 3000);
-        changeView(photoFrame, "slideShow");
+
     }
 
 }

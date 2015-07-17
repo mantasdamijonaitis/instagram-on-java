@@ -1,6 +1,7 @@
 package insta;
 import java.util.*;
 
+import org.apache.log4j.Logger;
 import org.jinstagram.Instagram;
 import org.jinstagram.entity.tags.TagMediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
@@ -8,6 +9,9 @@ import org.jinstagram.exceptions.InstagramException;
 
 
 public class InstagramFeedIterator implements Iterator<MediaFeedData> {
+
+    private static Logger LOG = Logger.getLogger(InstagramFeedIterator.class.getName());
+
 
 	private final Instagram instagram;
 	private Iterator<MediaFeedData> mediaIterator;
@@ -25,6 +29,7 @@ public class InstagramFeedIterator implements Iterator<MediaFeedData> {
 
 	private void loadNextMediaPage() throws InstagramException {
 		final TagMediaFeed tagMediaFeed = loadMedia(tagName, maxTagId, pageSize);
+        LOG.info(String.format("Loaded media #%s, offset=%s, requested=%d, received=%d", tagName, maxTagId, pageSize, tagMediaFeed.getData().size()));
 		mediaIterator = tagMediaFeed.getData().iterator();
 		maxTagId = tagMediaFeed.getPagination().getNextMaxTagId();
 	}
